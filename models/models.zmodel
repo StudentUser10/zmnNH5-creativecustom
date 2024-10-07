@@ -1,0 +1,163 @@
+
+
+model Product {
+
+    id                String        @id @default(uuid())  
+    name            String?          
+    description  String?          
+    price          String?          
+    imageUrl    String?          
+ 
+    cartItems  CartItem[]  @relation("product")  
+    orderItems  OrderItem[]  @relation("product")  
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model Cart {
+
+    id                String        @id @default(uuid())  
+
+userId        String?          
+    user            User?            @relation(fields: [userId], references: [id], name:"user")  
+ 
+    cartItems  CartItem[]  @relation("cart")  
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model Order {
+
+    id                String        @id @default(uuid())  
+    status        String?          
+    totalAmount  String?          
+    shippingAddress  String?          
+    paymentInfo  String?          
+
+userId        String?          
+    user            User?            @relation(fields: [userId], references: [id], name:"user")  
+ 
+    orderItems  OrderItem[]  @relation("order")  
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model SupportMessage {
+
+    id                String        @id @default(uuid())  
+    name            String?          
+    email          String?          
+    message      String?          
+
+userId        String?          
+    user            User?            @relation(fields: [userId], references: [id], name:"user")  
+ 
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model CartItem {
+
+    id                String        @id @default(uuid())  
+    quantity    Float?            
+    customizationData  String?          
+
+cartId        String?          
+    cart            Cart?            @relation(fields: [cartId], references: [id], name:"cart")  
+    productId  String?          
+    product      Product?      @relation(fields: [productId], references: [id], name:"product")  
+ 
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+model OrderItem {
+
+    id                String        @id @default(uuid())  
+    quantity    Float?            
+    price          String?          
+    customizationData  String?          
+
+orderId      String?          
+    order          Order?          @relation(fields: [orderId], references: [id], name:"order")  
+    productId  String?          
+    product      Product?      @relation(fields: [productId], references: [id], name:"product")  
+ 
+      dateCreated DateTime @default(now())
+      dateUpdated DateTime @updatedAt  @default(now())
+      @@allow("all", true)
+}
+
+enum UserStatus {
+    INVITED
+    VERIFIED
+}
+
+model User {
+    id                String             @id @default(uuid())
+    name              String?
+    email             String?            @unique
+    pictureUrl        String?            @default('https://i.imgur.com/ZdJSK3Y.jpeg')
+    tokenInvitation   String?
+    emailVerified     Boolean?
+    
+    stripeCustomerId  String?
+    
+    status            UserStatus         @default(VERIFIED)
+
+    // this is the role of the user for the application
+    globalRole        String             @default('USER')
+    password          String?            @password @omit
+    dateCreated       DateTime           @default(now())
+    dateUpdated       DateTime           @updatedAt @default(now())
+    accounts          Account[]
+    sessions          Session[]
+
+carts          Cart[]        @relation("user")  
+        orders        Order[]      @relation("user")  
+        supportMessages  SupportMessage[]  @relation("user")  
+
+@@auth()
+    @@allow("all", auth().id == this.id)
+    @@allow('all', auth().globalRole == 'ADMIN')
+
+    //we only allow that user to register if they don't create an admin role
+    @@allow("create", globalRole != 'ADMIN')
+    @@allow("read", true)
+}
+
+model Account {
+    id                       String  @id @default(uuid())
+    userId                   String
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? // @db.Text
+    access_token             String? // @db.Text
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String? // @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token_expires_in Int?
+
+    @@unique([provider, providerAccountId])
+
+    @@allow("all", auth().id == user.id)
+}
+
+model Session {
+    id           String   @id @default(uuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@allow("all", auth().id == user.id)
+}
