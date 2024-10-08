@@ -36,9 +36,10 @@ export default function DesignEditorPage() {
     where: { id: params.productId },
   })
 
-  const { data: existingCart } = Api.cart.findFirst.useQuery({
+  const { data: existingCart, error: cartError } = Api.cart.findFirst.useQuery({
     where: { userId: user?.id },
-    enabled: !!user as boolean,
+  }, {
+    enabled: !!user
   })
 
   const { mutateAsync: createCartItem } = Api.cartItem.create.useMutation()
@@ -47,7 +48,11 @@ export default function DesignEditorPage() {
     if (product && typeof product.imageUrl === 'string') {
       setPreviewUrl(product.imageUrl)
     }
-  }, [product])
+    if (cartError) {
+      console.error('Error fetching cart:', cartError)
+      enqueueSnackbar('Failed to fetch cart', { variant: 'error' })
+    }
+  }, [product, cartError])
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -95,6 +100,7 @@ export default function DesignEditorPage() {
       enqueueSnackbar('Design saved to cart', { variant: 'success' })
       router.push('/cart')
     } catch (error) {
+      console.error('Error saving design:', error)
       enqueueSnackbar('Failed to save design', { variant: 'error' })
     }
   }
