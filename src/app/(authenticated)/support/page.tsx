@@ -40,19 +40,19 @@ export default function SupportPage() {
 
   const faqData = [
     {
-      question: 'How do I track my order?',
+      question: 'Como faço para rastrear meu pedido?',
       answer:
-        'You can track your order by logging into your account and visiting the "My Orders" section.',
+        'Você pode rastrear seu pedido fazendo login em sua conta e visitando a seção "Meus Pedidos".',
     },
     {
-      question: 'What is your return policy?',
+      question: 'Qual é a política de devolução?',
       answer:
-        'We offer a 30-day return policy for most items. Please check our Returns page for more details.',
+        'Oferecemos uma política de devolução de 30 dias para a maioria dos itens. Por favor, verifique nossa página de Devoluções para mais detalhes.',
     },
     {
-      question: 'How can I change my shipping address?',
+      question: 'Como posso alterar meu endereço de entrega?',
       answer:
-        'You can update your shipping address in your account settings or during the checkout process.',
+        'Você pode atualizar seu endereço de entrega nas configurações da sua conta ou durante o processo de checkout.',
     },
   ]
 
@@ -66,12 +66,12 @@ export default function SupportPage() {
           userId: user?.id,
         },
       })
-      enqueueSnackbar('Your message has been sent successfully!', {
+      enqueueSnackbar('Sua mensagem foi enviada com sucesso!', {
         variant: 'success',
       })
       form.resetFields()
     } catch (error) {
-      enqueueSnackbar('Failed to send message. Please try again.', {
+      enqueueSnackbar('Falha ao enviar mensagem. Por favor, tente novamente.', {
         variant: 'error',
       })
     }
@@ -82,18 +82,18 @@ export default function SupportPage() {
       try {
         await createSupportMessage({
           data: {
-            name: user?.name || 'Anonymous',
-            email: user?.email || 'anonymous@example.com',
+            name: user?.name || 'Anônimo',
+            email: user?.email || 'anonimo@exemplo.com',
             message: chatMessage,
             userId: user?.id,
           },
         })
-        enqueueSnackbar('Chat message sent successfully!', {
+        enqueueSnackbar('Mensagem de chat enviada com sucesso!', {
           variant: 'success',
         })
         setChatMessage('')
       } catch (error) {
-        enqueueSnackbar('Failed to send chat message. Please try again.', {
+        enqueueSnackbar('Falha ao enviar mensagem de chat. Por favor, tente novamente.', {
           variant: 'error',
         })
       }
@@ -103,17 +103,17 @@ export default function SupportPage() {
   return (
     <PageLayout layout="narrow">
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Title level={2}>Support Center</Title>
+        <Title level={2}>Central de Suporte</Title>
         <Paragraph>
-          Welcome to our Support Center. Here you can find answers to frequently
-          asked questions, submit a contact form, or use our live chat for
-          immediate assistance.
+          Bem-vindo à nossa Central de Suporte. Aqui você pode encontrar respostas para perguntas
+          frequentes, enviar um formulário de contato ou usar nosso chat ao vivo para
+          assistência imediata.
         </Paragraph>
 
         <Row gutter={[24, 24]}>
           <Col xs={24} md={12}>
             <Title level={3}>
-              <QuestionCircleOutlined /> FAQ
+              <QuestionCircleOutlined /> Perguntas Frequentes
             </Title>
             <Collapse>
               {faqData.map((faq, index) => (
@@ -125,23 +125,23 @@ export default function SupportPage() {
           </Col>
 
           <Col xs={24} md={12}>
-            <Title level={3}>Contact Us</Title>
+            <Title level={3}>Entre em Contato</Title>
             <Form form={form} layout="vertical" onFinish={handleContactSubmit}>
               <Form.Item
                 name="name"
-                label="Name"
-                rules={[{ required: true, message: 'Please enter your name' }]}
+                label="Nome"
+                rules={[{ required: true, message: 'Por favor, insira seu nome' }]}
               >
                 <Input />
               </Form.Item>
               <Form.Item
                 name="email"
-                label="Email"
+                label="E-mail"
                 rules={[
                   {
                     required: true,
                     type: 'email',
-                    message: 'Please enter a valid email',
+                    message: 'Por favor, insira um e-mail válido',
                   },
                 ]}
               >
@@ -149,16 +149,16 @@ export default function SupportPage() {
               </Form.Item>
               <Form.Item
                 name="message"
-                label="Message"
+                label="Mensagem"
                 rules={[
-                  { required: true, message: 'Please enter your message' },
+                  { required: true, message: 'Por favor, insira sua mensagem' },
                 ]}
               >
                 <TextArea rows={4} />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" htmlType="submit">
-                  Submit
+                  Enviar
                 </Button>
               </Form.Item>
             </Form>
@@ -166,7 +166,7 @@ export default function SupportPage() {
         </Row>
 
         <Title level={3}>
-          <MessageOutlined /> Live Chat
+          <MessageOutlined /> Chat ao Vivo
         </Title>
         <Row>
           <Col xs={24}>
@@ -175,14 +175,14 @@ export default function SupportPage() {
                 style={{ width: 'calc(100% - 100px)' }}
                 value={chatMessage}
                 onChange={e => setChatMessage(e.target.value)}
-                placeholder="Type your message here..."
+                placeholder="Digite sua mensagem aqui..."
               />
               <Button
                 type="primary"
                 onClick={handleChatSubmit}
                 icon={<SendOutlined />}
               >
-                Send
+                Enviar
               </Button>
             </Input.Group>
           </Col>

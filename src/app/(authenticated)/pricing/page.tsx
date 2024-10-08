@@ -61,15 +61,15 @@ const PricingCard = ({ plan, isYearly, isPopular }) => {
     <div className="relative">
       {isPopular && (
         <span className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-          Popular
+          Mais Popular
         </span>
       )}
       <div className={`flex flex-col p-6 mx-auto max-w-lg text-center ${isPopular ? 'bg-gray-900 text-white' : 'bg-gray-800 text-gray-300'} rounded-lg border ${isPopular ? 'border-orange-500' : 'border-gray-700'} shadow xl:p-8`}>
         <h3 className="mb-4 text-2xl font-semibold">{plan.title}</h3>
         <p className="font-light text-gray-400 sm:text-lg">{plan.description}</p>
         <div className="flex justify-center items-baseline my-8">
-          <span className="mr-2 text-5xl font-extrabold">${price.toFixed(1)}</span>
-          <span className="text-gray-400">/month</span>
+          <span className="mr-2 text-5xl font-extrabold">R${price.toFixed(1)}</span>
+          <span className="text-gray-400">/mês</span>
         </div>
         <ul role="list" className="mb-8 space-y-4 text-left">
           {plan.features.map((feature, index) => (
@@ -80,7 +80,7 @@ const PricingCard = ({ plan, isYearly, isPopular }) => {
           ))}
         </ul>
         <button onClick={handleClick} className={`w-full ${isPopular ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-600 hover:bg-blue-700'} focus:ring-4 focus:ring-blue-200 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center`}>
-          Get Started
+          Começar Agora
         </button>
       </div>
     </div>

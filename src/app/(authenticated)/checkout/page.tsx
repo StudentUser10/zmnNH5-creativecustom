@@ -49,10 +49,10 @@ export default function CheckoutPage() {
         },
       })
 
-      enqueueSnackbar('Order placed successfully!', { variant: 'success' })
-      router.push(`/order-confirmation/${order.id}`)
+      enqueueSnackbar('Pedido realizado com sucesso!', { variant: 'success' })
+      router.push(`/confirmacao-pedido/${order.id}`)
     } catch (error) {
-      enqueueSnackbar('Failed to place order. Please try again.', {
+      enqueueSnackbar('Falha ao realizar o pedido. Por favor, tente novamente.', {
         variant: 'error',
       })
     }
@@ -69,14 +69,14 @@ export default function CheckoutPage() {
   }
 
   if (isCartLoading) {
-    return <PageLayout layout="narrow">Loading...</PageLayout>
+    return <PageLayout layout="narrow">Carregando...</PageLayout>
   }
 
   return (
     <PageLayout layout="narrow">
-      <Title level={2}>Checkout</Title>
+      <Title level={2}>Finalizar Compra</Title>
       <Text>
-        Complete your order by providing shipping and payment information.
+        Complete seu pedido fornecendo informações de envio e pagamento.
       </Text>
 
       <Form
@@ -89,8 +89,8 @@ export default function CheckoutPage() {
           <Col span={12}>
             <Form.Item
               name="address"
-              label="Address"
-              rules={[{ required: true, message: 'Please enter your address' }]}
+              label="Endereço"
+              rules={[{ required: true, message: 'Por favor, insira seu endereço' }]}
             >
               <Input />
             </Form.Item>
@@ -98,8 +98,8 @@ export default function CheckoutPage() {
           <Col span={12}>
             <Form.Item
               name="city"
-              label="City"
-              rules={[{ required: true, message: 'Please enter your city' }]}
+              label="Cidade"
+              rules={[{ required: true, message: 'Por favor, insira sua cidade' }]}
             >
               <Input />
             </Form.Item>
@@ -109,8 +109,8 @@ export default function CheckoutPage() {
           <Col span={12}>
             <Form.Item
               name="country"
-              label="Country"
-              rules={[{ required: true, message: 'Please enter your country' }]}
+              label="País"
+              rules={[{ required: true, message: 'Por favor, insira seu país' }]}
             >
               <Input />
             </Form.Item>
@@ -118,9 +118,9 @@ export default function CheckoutPage() {
           <Col span={12}>
             <Form.Item
               name="zipCode"
-              label="Zip Code"
+              label="CEP"
               rules={[
-                { required: true, message: 'Please enter your zip code' },
+                { required: true, message: 'Por favor, insira seu CEP' },
               ]}
             >
               <Input />
@@ -129,15 +129,15 @@ export default function CheckoutPage() {
         </Row>
 
         <Title level={4} style={{ marginTop: 24 }}>
-          Payment Information
+          Informações de Pagamento
         </Title>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               name="cardNumber"
-              label="Card Number"
+              label="Número do Cartão"
               rules={[
-                { required: true, message: 'Please enter your card number' },
+                { required: true, message: 'Por favor, insira o número do seu cartão' },
               ]}
             >
               <Input prefix={<CreditCardOutlined />} />
@@ -146,11 +146,11 @@ export default function CheckoutPage() {
           <Col span={12}>
             <Form.Item
               name="cardName"
-              label="Name on Card"
+              label="Nome no Cartão"
               rules={[
                 {
                   required: true,
-                  message: 'Please enter the name on your card',
+                  message: 'Por favor, insira o nome no cartão',
                 },
               ]}
             >
@@ -162,19 +162,19 @@ export default function CheckoutPage() {
           <Col span={12}>
             <Form.Item
               name="expiryDate"
-              label="Expiry Date"
+              label="Data de Validade"
               rules={[
-                { required: true, message: 'Please enter the expiry date' },
+                { required: true, message: 'Por favor, insira a data de validade' },
               ]}
             >
-              <Input placeholder="MM/YY" />
+              <Input placeholder="MM/AA" />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               name="cvv"
               label="CVV"
-              rules={[{ required: true, message: 'Please enter the CVV' }]}
+              rules={[{ required: true, message: 'Por favor, insira o CVV' }]}
             >
               <Input prefix={<LockOutlined />} />
             </Form.Item>
@@ -182,19 +182,19 @@ export default function CheckoutPage() {
         </Row>
 
         <Space direction="vertical" style={{ width: '100%', marginTop: 24 }}>
-          <Text strong>Order Summary:</Text>
+          <Text strong>Resumo do Pedido:</Text>
           {cart?.cartItems.map(item => (
             <Text key={item.id}>
-              {item.product?.name} x {item.quantity} - $
+              {item.product?.name} x {item.quantity} - R$
               {parseFloat(item.product?.price || '0') * (item.quantity || 0)}
             </Text>
           ))}
-          <Text strong>Total: ${calculateTotal().toFixed(2)}</Text>
+          <Text strong>Total: R$ {calculateTotal().toFixed(2)}</Text>
         </Space>
 
         <Form.Item style={{ marginTop: 24 }}>
           <Button type="primary" htmlType="submit" loading={loading}>
-            Place Order
+            Finalizar Pedido
           </Button>
         </Form.Item>
       </Form>

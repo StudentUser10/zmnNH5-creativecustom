@@ -28,15 +28,15 @@ export default function HomePage() {
 
   return (
     <PageLayout layout="narrow">
-      <Title level={1}>Welcome to Our Online Store</Title>
-      <Paragraph>Discover amazing products!</Paragraph>
+      <Title level={1}>Bem-vindo à Nossa Loja Online</Title>
+      <Paragraph>Descubra produtos incríveis!</Paragraph>
 
       <Title level={2} style={{ marginTop: '32px' }}>
-        Featured Products
+        Produtos em Destaque
       </Title>
       <Row gutter={[16, 16]}>
         {productsLoading ? (
-          <Col span={24}>Loading products...</Col>
+          <Col span={24}>Carregando produtos...</Col>
         ) : (
           featuredProducts?.map(product => (
             <Col xs={24} sm={12} md={8} lg={6} key={product.id}>
@@ -58,7 +58,7 @@ export default function HomePage() {
                       <Paragraph ellipsis={{ rows: 2 }}>
                         {product.description}
                       </Paragraph>
-                      <Paragraph strong>Price: ${product.price}</Paragraph>
+                      <Paragraph strong>Preço: R${product.price}</Paragraph>
                     </>
                   }
                 />

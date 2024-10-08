@@ -31,7 +31,7 @@ export default function OrderConfirmationPage() {
   }
 
   if (!order) {
-    enqueueSnackbar('Order not found', { variant: 'error' })
+    enqueueSnackbar('Pedido não encontrado', { variant: 'error' })
     router.push('/home')
     return null
   }
@@ -40,33 +40,32 @@ export default function OrderConfirmationPage() {
     <PageLayout layout="narrow">
       <Card>
         <Title level={2}>
-          <CheckCircleOutlined style={{ color: '#52c41a' }} /> Order
-          Confirmation
+          <CheckCircleOutlined style={{ color: '#52c41a' }} /> Confirmação do Pedido
         </Title>
         <Paragraph>
-          Thank you for your purchase! An email confirmation has been sent to
-          your registered email address.
+          Obrigado pela sua compra! Uma confirmação por e-mail foi enviada para
+          o seu endereço de e-mail registrado.
         </Paragraph>
 
-        <Descriptions title="Order Details" bordered column={1}>
-          <Descriptions.Item label="Order ID">{order.id}</Descriptions.Item>
-          <Descriptions.Item label="Date">
-            {dayjs(order.dateCreated).format('MMMM D, YYYY h:mm A')}
+        <Descriptions title="Detalhes do Pedido" bordered column={1}>
+          <Descriptions.Item label="ID do Pedido">{order.id}</Descriptions.Item>
+          <Descriptions.Item label="Data">
+            {dayjs(order.dateCreated).locale('pt-br').format('D [de] MMMM [de] YYYY [às] HH:mm')}
           </Descriptions.Item>
           <Descriptions.Item label="Status">{order.status}</Descriptions.Item>
-          <Descriptions.Item label="Total Amount">
-            ${order.totalAmount}
+          <Descriptions.Item label="Valor Total">
+            R${order.totalAmount}
           </Descriptions.Item>
-          <Descriptions.Item label="Shipping Address">
+          <Descriptions.Item label="Endereço de Entrega">
             {order.shippingAddress}
           </Descriptions.Item>
-          <Descriptions.Item label="Payment Info">
+          <Descriptions.Item label="Informações de Pagamento">
             {order.paymentInfo}
           </Descriptions.Item>
         </Descriptions>
 
         <Title level={4} style={{ marginTop: '24px' }}>
-          <ShoppingOutlined /> Ordered Items
+          <ShoppingOutlined /> Itens Pedidos
         </Title>
         <List
           dataSource={order.orderItems}
@@ -77,14 +76,14 @@ export default function OrderConfirmationPage() {
                   <Text strong>{item.product?.name}</Text>
                 </Col>
                 <Col span={4}>
-                  <Text>Quantity: {item.quantity?.toString()}</Text>
+                  <Text>Quantidade: {item.quantity?.toString()}</Text>
                 </Col>
                 <Col span={4}>
-                  <Text>Price: ${item.price}</Text>
+                  <Text>Preço: R${item.price}</Text>
                 </Col>
                 <Col span={4}>
                   <Text strong>
-                    Total: $
+                    Total: R$
                     {(Number(item.price) * (item.quantity || 0)).toFixed(2)}
                   </Text>
                 </Col>
@@ -94,8 +93,8 @@ export default function OrderConfirmationPage() {
         />
 
         <Paragraph style={{ marginTop: '24px' }}>
-          If you have any questions about your order, please visit our{' '}
-          <a onClick={() => router.push('/support')}>Support Page</a>.
+          Se você tiver alguma dúvida sobre seu pedido, por favor visite nossa{' '}
+          <a onClick={() => router.push('/support')}>Página de Suporte</a>.
         </Paragraph>
       </Card>
     </PageLayout>

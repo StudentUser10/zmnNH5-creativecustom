@@ -57,9 +57,9 @@ export default function ShoppingCartPage() {
     try {
       await updateCartItem({ where: { id }, data: { quantity } })
       await refetch()
-      enqueueSnackbar('Cart updated successfully', { variant: 'success' })
+      enqueueSnackbar('Carrinho atualizado com sucesso', { variant: 'success' })
     } catch (error) {
-      enqueueSnackbar('Failed to update cart', { variant: 'error' })
+      enqueueSnackbar('Falha ao atualizar o carrinho', { variant: 'error' })
     }
   }
 
@@ -67,9 +67,9 @@ export default function ShoppingCartPage() {
     try {
       await deleteCartItem({ where: { id } })
       await refetch()
-      enqueueSnackbar('Item removed from cart', { variant: 'success' })
+      enqueueSnackbar('Item removido do carrinho', { variant: 'success' })
     } catch (error) {
-      enqueueSnackbar('Failed to remove item', { variant: 'error' })
+      enqueueSnackbar('Falha ao remover o item', { variant: 'error' })
     }
   }
 
@@ -80,15 +80,15 @@ export default function ShoppingCartPage() {
   if (isLoading) {
     return (
       <PageLayout layout="narrow">
-        <Text>Loading...</Text>
+        <Text>Carregando...</Text>
       </PageLayout>
     )
   }
 
   return (
     <PageLayout layout="narrow">
-      <Title level={2}>Carrinho</Title>
-      <Text>Manage your purchases before checking out</Text>
+      <Title level={2}>Carrinho de Compras</Title>
+      <Text>Gerencie suas compras antes de finalizar</Text>
       {cartItems.length > 0 ? (
         <>
           <List
@@ -98,9 +98,9 @@ export default function ShoppingCartPage() {
                 <Card style={{ width: '100%' }}>
                   <Space direction="vertical" style={{ width: '100%' }}>
                     <Text strong>{item.product?.name}</Text>
-                    <Text>Price: ${item.product?.price}</Text>
+                    <Text>Preço: ${item.product?.price}</Text>
                     <Space>
-                      <Text>Quantity:</Text>
+                      <Text>Quantidade:</Text>
                       <InputNumber
                         min={1}
                         value={item.quantity || 0}
@@ -112,7 +112,7 @@ export default function ShoppingCartPage() {
                         icon={<DeleteOutlined />}
                         onClick={() => handleRemoveItem(item.id)}
                       >
-                        Remove
+                        Remover
                       </Button>
                     </Space>
                   </Space>
@@ -122,20 +122,20 @@ export default function ShoppingCartPage() {
           />
           <Card style={{ marginTop: '20px' }}>
             <Space direction="vertical" style={{ width: '100%' }}>
-              <Text strong>Total: ${totalAmount.toFixed(2)}</Text>
+              <Text strong>Total: R${totalAmount.toFixed(2)}</Text>
               <Button
                 type="primary"
                 icon={<ShoppingCartOutlined />}
                 onClick={handleCheckout}
               >
-                Proceed to Checkout
+                Finalizar Compra
               </Button>
             </Space>
           </Card>
         </>
       ) : (
         <Empty
-          description="Your cart is empty"
+          description="Seu carrinho está vazio"
           image={Empty.PRESENTED_IMAGE_SIMPLE}
         />
       )}

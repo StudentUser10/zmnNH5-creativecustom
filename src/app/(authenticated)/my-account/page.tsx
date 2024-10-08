@@ -44,32 +44,32 @@ export default function MyAccountPage() {
             },
           },
         })
-        enqueueSnackbar('Items added to cart successfully', {
+        enqueueSnackbar('Itens adicionados ao carrinho com sucesso', {
           variant: 'success',
         })
         router.push('/cart')
       }
     } catch (error) {
-      enqueueSnackbar('Failed to reorder items', { variant: 'error' })
+      enqueueSnackbar('Falha ao repetir o pedido', { variant: 'error' })
     }
   }
 
   return (
     <PageLayout layout="narrow">
       <Title level={2}>Minha Conta</Title>
-      <Text>Manage your account information and view your order history.</Text>
+      <Text>Gerencie suas informações de conta e visualize seu histórico de pedidos.</Text>
 
       <Card style={{ marginTop: 24 }}>
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12}>
             <Title level={4}>
-              <UserOutlined /> Account Information
+              <UserOutlined /> Informações da Conta
             </Title>
             {user ? (
               <>
-                <Text strong>Name:</Text> <Text>{user.name}</Text>
+                <Text strong>Nome:</Text> <Text>{user.name}</Text>
                 <br />
-                <Text strong>Email:</Text> <Text>{user.email}</Text>
+                <Text strong>E-mail:</Text> <Text>{user.email}</Text>
               </>
             ) : (
               <Spin />
@@ -77,7 +77,7 @@ export default function MyAccountPage() {
           </Col>
           <Col xs={24} sm={12}>
             <Title level={4}>
-              <HistoryOutlined /> Order History
+              <HistoryOutlined /> Histórico de Pedidos
             </Title>
             {ordersLoading ? (
               <Spin />
@@ -92,20 +92,20 @@ export default function MyAccountPage() {
                         icon={<ReloadOutlined />}
                         onClick={() => handleReorder(order.id)}
                       >
-                        Reorder
+                        Repetir Pedido
                       </Button>,
                     ]}
                   >
                     <List.Item.Meta
-                      title={`Order #${order.id}`}
+                      title={`Pedido #${order.id}`}
                       description={
                         <>
                           <Text>
-                            Date:{' '}
-                            {dayjs(order.dateCreated).format('MMMM D, YYYY')}
+                            Data:{' '}
+                            {dayjs(order.dateCreated).locale('pt-br').format('D [de] MMMM [de] YYYY')}
                           </Text>
                           <br />
-                          <Text>Total: ${order.totalAmount}</Text>
+                          <Text>Total: R${order.totalAmount}</Text>
                           <br />
                           <Text>Status: {order.status}</Text>
                         </>
