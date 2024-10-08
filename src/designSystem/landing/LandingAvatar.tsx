@@ -3,6 +3,7 @@ import { ImgHTMLAttributes } from 'react'
 
 interface LandingAvatarProps extends ImgHTMLAttributes<HTMLImageElement> {
   size?: 'small' | 'medium' | 'large'
+  alt?: string
 }
 
 /**
@@ -14,6 +15,7 @@ export const LandingAvatar = ({
   width = 128,
   height = 128,
   size = 'medium',
+  alt = '',
   ...remainingProps
 }: LandingAvatarProps) => {
   return (
@@ -21,6 +23,7 @@ export const LandingAvatar = ({
       src={src}
       width={width}
       height={height}
+      alt={alt}
       className={clsx(
         'rounded-full border-2 border-solid border-primary-100',
         size === 'small' ? 'w-6 h-6' : '',

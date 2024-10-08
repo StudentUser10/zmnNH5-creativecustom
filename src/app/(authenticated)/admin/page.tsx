@@ -27,11 +27,6 @@ export default function AdminDashboardPage() {
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
 
-  if (!user || (user.email !== "admin@admin.com" && user.globalRole !== 'ADMIN')) {
-    router.push('/home')
-    return null
-  }
-
   const {
     data: ordersData,
     isLoading: isOrdersLoading,
@@ -55,6 +50,11 @@ export default function AdminDashboardPage() {
     if (ordersData) setOrders(ordersData)
     if (productsData) setProducts(productsData)
   }, [ordersData, productsData])
+
+  if (!user || (user.email !== "admin@admin.com" && user.globalRole !== 'ADMIN')) {
+    router.push('/home')
+    return null
+  }
 
   const handleOrderProcess = async values => {
     try {

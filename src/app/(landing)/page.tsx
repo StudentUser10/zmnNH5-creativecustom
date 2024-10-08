@@ -166,10 +166,10 @@ export default function LandingPage() {
   ]
 
   const logos = [
-    { url: 'https://i.imgur.com/afwBIFK.png' },
-    { url: 'https://i.imgur.com/LlloOPa.png' },
-    { url: 'https://i.imgur.com/j8jPb4H.png' },
-    { url: 'https://i.imgur.com/mJ1sZFv.png' },
+    { url: 'https://i.imgur.com/afwBIFK.png', name: 'Logo 1' },
+    { url: 'https://i.imgur.com/LlloOPa.png', name: 'Logo 2' },
+    { url: 'https://i.imgur.com/j8jPb4H.png', name: 'Logo 3' },
+    { url: 'https://i.imgur.com/mJ1sZFv.png', name: 'Logo 4' },
   ]
 
   const steps = [

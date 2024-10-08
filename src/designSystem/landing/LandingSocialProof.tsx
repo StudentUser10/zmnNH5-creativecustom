@@ -2,6 +2,7 @@ import { HTMLAttributes } from 'react'
 
 type LogoType = {
   url: string
+  name: string
 }
 
 interface Props extends HTMLAttributes<HTMLElement> {
@@ -18,7 +19,7 @@ export const LandingSocialProof: React.FC<Props> = ({ logos }) => {
         </h2>
         <div className="flex gap-8 md:gap-20 items-center justify-center mt-8 flex-wrap">
           {logos.map((logo, idx) => (
-            <img className="h-6 md:h-10" key={`logo-${idx}`} src={logo.url} />
+            <img className="h-6 md:h-10" key={`logo-${idx}`} src={logo.url} alt={`${logo.name} logo`} />
           ))}
         </div>
       </div>
