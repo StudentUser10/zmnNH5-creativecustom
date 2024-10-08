@@ -56,7 +56,7 @@ export default function MyAccountPage() {
 
   return (
     <PageLayout layout="narrow">
-      <Title level={2}>My Account</Title>
+      <Title level={2}>Minha Conta</Title>
       <Text>Manage your account information and view your order history.</Text>
 
       <Card style={{ marginTop: 24 }}>

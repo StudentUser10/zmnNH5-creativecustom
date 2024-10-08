@@ -33,7 +33,7 @@ export const NavigationLayout: React.FC<Props> = ({ children, isAdmin }) => {
 
     {
       key: '/cart',
-      label: 'Shopping Cart Page',
+      label: 'Carrinho',
       position: 'topbar',
 
       onClick: () => goTo('/cart'),
@@ -49,7 +49,7 @@ export const NavigationLayout: React.FC<Props> = ({ children, isAdmin }) => {
 
     {
       key: '/my-account',
-      label: 'My Account Page',
+      label: 'Minha Conta',
       position: 'topbar',
 
       onClick: () => goTo('/my-account'),

@@ -87,7 +87,7 @@ export default function ShoppingCartPage() {
 
   return (
     <PageLayout layout="narrow">
-      <Title level={2}>Shopping Cart</Title>
+      <Title level={2}>Carrinho</Title>
       <Text>Manage your purchases before checking out</Text>
       {cartItems.length > 0 ? (
         <>
