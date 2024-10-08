@@ -1,25 +1,24 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import {
-  Typography,
-  Input,
-  ColorPicker,
-  Button,
-  Row,
-  Col,
-  Card,
-  Space,
-} from 'antd'
-import { UploadOutlined, EditOutlined, SaveOutlined } from '@ant-design/icons'
-const { Title, Text } = Typography
 import { useUserContext } from '@/core/context'
-import { useRouter, useParams } from 'next/navigation'
 import { useUploadPublic } from '@/core/hooks/upload'
-import { useSnackbar } from 'notistack'
-import dayjs from 'dayjs'
 import { Api } from '@/core/trpc'
 import { PageLayout } from '@/designSystem'
+import { EditOutlined, SaveOutlined, UploadOutlined } from '@ant-design/icons'
+import {
+  Button,
+  Card,
+  Col,
+  ColorPicker,
+  Input,
+  Row,
+  Space,
+  Typography,
+} from 'antd'
+import { useParams, useRouter } from 'next/navigation'
+import { useSnackbar } from 'notistack'
+import { useEffect, useState } from 'react'
+const { Title, Text } = Typography
 
 export default function DesignEditorPage() {
   const router = useRouter()
@@ -39,7 +38,7 @@ export default function DesignEditorPage() {
 
   const { data: existingCart } = Api.cart.findFirst.useQuery({
     where: { userId: user?.id },
-    enabled: !!user,
+    enabled: !!user as boolean,
   })
 
   const { mutateAsync: createCartItem } = Api.cartItem.create.useMutation()
