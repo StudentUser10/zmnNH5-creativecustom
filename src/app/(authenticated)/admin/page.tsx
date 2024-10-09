@@ -1,13 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Typography, Table, Button, Modal, Form, Input, Select, Upload, Image } from 'antd'
+import { Typography, Table, Button, Modal, Form, Input, Select } from 'antd'
 import {
   ShoppingCartOutlined,
   EditOutlined,
   DeleteOutlined,
   PlusOutlined,
-  UploadOutlined,
 } from '@ant-design/icons'
 const { Title, Text } = Typography
 import { useUserContext } from '@/core/context'
@@ -46,7 +45,6 @@ export default function AdminDashboardPage() {
   const { mutateAsync: updateProduct } = Api.product.update.useMutation()
   const { mutateAsync: deleteProduct } = Api.product.delete.useMutation()
   const { mutateAsync: createProduct } = Api.product.create.useMutation()
-  const { mutateAsync: upload } = useUploadPublic()
 
   useEffect(() => {
     if (ordersData) setOrders(ordersData)
@@ -74,15 +72,7 @@ export default function AdminDashboardPage() {
 
   const handleProductUpdate = async values => {
     try {
-      let imageUrl = selectedProduct.imageUrl;
-      if (values.image && values.image[0]) {
-        const { url } = await upload({ file: values.image[0].originFileObj });
-        imageUrl = url;
-      }
-      await updateProduct({ 
-        where: { id: selectedProduct.id }, 
-        data: { ...values, imageUrl } 
-      })
+      await updateProduct({ where: { id: selectedProduct.id }, data: values })
       alert('Product updated successfully')
       setIsProductModalVisible(false)
       refetchProducts()
@@ -103,12 +93,7 @@ export default function AdminDashboardPage() {
 
   const handleAddProduct = async values => {
     try {
-      let imageUrl;
-      if (values.image && values.image[0]) {
-        const { url } = await upload({ file: values.image[0].originFileObj });
-        imageUrl = url;
-      }
-      await createProduct({ data: { ...values, imageUrl } })
+      await createProduct({ data: values })
       alert('Product added successfully')
       setIsAddProductModalVisible(false)
       refetchProducts()
@@ -146,12 +131,6 @@ export default function AdminDashboardPage() {
   ]
 
   const productColumns = [
-    { 
-      title: 'Image', 
-      dataIndex: 'imageUrl', 
-      key: 'image',
-      render: imageUrl => <Image src={imageUrl} alt="Product" width={50} />
-    },
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
     {
