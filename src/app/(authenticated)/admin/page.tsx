@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Typography, Table, Button, Modal, Form, Input, Select } from 'antd'
+import { Typography, Table, Button, Modal, Form, Input, Select, Upload, Image } from 'antd'
 import {
   ShoppingCartOutlined,
   EditOutlined,
   DeleteOutlined,
   PlusOutlined,
+  UploadOutlined,
 } from '@ant-design/icons'
 const { Title, Text } = Typography
 import { useUserContext } from '@/core/context'
@@ -45,6 +46,7 @@ export default function AdminDashboardPage() {
   const { mutateAsync: updateProduct } = Api.product.update.useMutation()
   const { mutateAsync: deleteProduct } = Api.product.delete.useMutation()
   const { mutateAsync: createProduct } = Api.product.create.useMutation()
+  const { mutateAsync: upload } = useUploadPublic()
 
   useEffect(() => {
     if (ordersData) setOrders(ordersData)
@@ -72,7 +74,15 @@ export default function AdminDashboardPage() {
 
   const handleProductUpdate = async values => {
     try {
-      await updateProduct({ where: { id: selectedProduct.id }, data: values })
+      let imageUrl = selectedProduct.imageUrl;
+      if (values.image && values.image[0]) {
+        const { url } = await upload({ file: values.image[0].originFileObj });
+        imageUrl = url;
+      }
+      await updateProduct({ 
+        where: { id: selectedProduct.id }, 
+        data: { ...values, imageUrl } 
+      })
       alert('Product updated successfully')
       setIsProductModalVisible(false)
       refetchProducts()
@@ -93,7 +103,12 @@ export default function AdminDashboardPage() {
 
   const handleAddProduct = async values => {
     try {
-      await createProduct({ data: values })
+      let imageUrl;
+      if (values.image && values.image[0]) {
+        const { url } = await upload({ file: values.image[0].originFileObj });
+        imageUrl = url;
+      }
+      await createProduct({ data: { ...values, imageUrl } })
       alert('Product added successfully')
       setIsAddProductModalVisible(false)
       refetchProducts()
@@ -131,6 +146,12 @@ export default function AdminDashboardPage() {
   ]
 
   const productColumns = [
+    { 
+      title: 'Image', 
+      dataIndex: 'imageUrl', 
+      key: 'image',
+      render: imageUrl => <Image src={imageUrl} alt="Product" width={50} />
+    },
     { title: 'Name', dataIndex: 'name', key: 'name' },
     { title: 'Price', dataIndex: 'price', key: 'price' },
     {
@@ -228,6 +249,14 @@ export default function AdminDashboardPage() {
           <Form.Item name="description" label="Description">
             <Input.TextArea />
           </Form.Item>
+          <Form.Item name="image" label="Image">
+            <Upload beforeUpload={() => false} maxCount={1}>
+              <Button icon={<UploadOutlined />}>Upload Image</Button>
+            </Upload>
+          </Form.Item>
+          {selectedProduct?.imageUrl && (
+            <Image src={selectedProduct.imageUrl} alt="Current product image" width={100} />
+          )}
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Update Product
@@ -251,6 +280,11 @@ export default function AdminDashboardPage() {
           </Form.Item>
           <Form.Item name="description" label="Description">
             <Input.TextArea />
+          </Form.Item>
+          <Form.Item name="image" label="Image">
+            <Upload beforeUpload={() => false} maxCount={1}>
+              <Button icon={<UploadOutlined />}>Upload Image</Button>
+            </Upload>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
