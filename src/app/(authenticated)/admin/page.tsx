@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Typography, Table, Button, Modal, Form, Input, Select } from 'antd'
+import { Typography, Table, Button, Modal, Form, Input, Select, Upload, Image } from 'antd'
 import {
   ShoppingCartOutlined,
   EditOutlined,
   DeleteOutlined,
   PlusOutlined,
+  UploadOutlined,
 } from '@ant-design/icons'
 const { Title, Text } = Typography
 import { useUserContext } from '@/core/context'
@@ -234,7 +235,7 @@ export default function AdminDashboardPage() {
             </Upload>
           </Form.Item>
           {selectedProduct?.imageUrl && (
-            <Image src={selectedProduct.imageUrl} alt="Current product image" width={100} />
+            <Image src={selectedProduct.imageUrl} alt='Current product image' width={100} />
           )}
           <Form.Item>
             <Button type="primary" htmlType="submit">
