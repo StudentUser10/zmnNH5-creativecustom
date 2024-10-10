@@ -61,8 +61,8 @@ export default function MyAccountPage() {
   const handleDeleteAccount = async () => {
     try {
       await deleteAccount({ where: { id: user?.id } })
-      enqueueSnackbar('Conta excluída com sucesso', { variant: 'success' })
-      router.push('/home')
+      enqueueSnackbar('Conta excluída com sucesso. Redirecionando para a página inicial.', { variant: 'success' })
+      router.push('/')
     } catch (error) {
       enqueueSnackbar('Falha ao excluir a conta', { variant: 'error' })
     }
