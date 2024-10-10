@@ -46,7 +46,7 @@ export default function RegisterPage() {
         callbackUrl: '/home',
       })
     } catch (error) {
-      enqueueSnackbar(`Could not signup: ${error.message}`, {
+      enqueueSnackbar(`Não foi possível se registrar: ${error.message}`, {
         variant: 'error',
       })
 
@@ -65,7 +65,7 @@ export default function RegisterPage() {
         }}
         gap="middle"
       >
-        <AppHeader description="Welcome!" />
+        <AppHeader description="Bem-vindo!" />
 
         <Form
           form={form}
@@ -75,35 +75,35 @@ export default function RegisterPage() {
           requiredMark={false}
         >
           <Form.Item
-            label="Email"
+            label="E-mail"
             name="email"
-            rules={[{ required: true, message: 'Email is required' }]}
+            rules={[{ required: true, message: 'E-mail é obrigatório' }]}
           >
-            <Input type="email" placeholder="Your email" autoComplete="email" />
+            <Input type="email" placeholder="Seu e-mail" autoComplete="email" />
           </Form.Item>
           <Form.Item
             name="name"
-            rules={[{ required: true, message: 'Name is required' }]}
-            label="Name"
+            rules={[{ required: true, message: 'Nome é obrigatório' }]}
+            label="Nome"
           >
-            <Input placeholder="Your name" />
+            <Input placeholder="Seu nome" />
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label="Senha"
             name="password"
-            rules={[{ required: true, message: 'Password is required' }]}
+            rules={[{ required: true, message: 'Senha é obrigatória' }]}
           >
             <Input.Password
               type="password"
-              placeholder="Your password"
+              placeholder="Sua senha"
               autoComplete="current-password"
             />
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isLoading} block>
-              Register
+              Registrar
             </Button>
           </Form.Item>
         </Form>
@@ -114,8 +114,8 @@ export default function RegisterPage() {
           onClick={() => router.push('/login')}
         >
           <Flex gap={'small'} justify="center">
-            <Typography.Text type="secondary">Have an account?</Typography.Text>{' '}
-            <Typography.Text>Sign in</Typography.Text>
+            <Typography.Text type="secondary">Já tem uma conta?</Typography.Text>{' '}
+            <Typography.Text>Entrar</Typography.Text>
           </Flex>
         </Button>
       </Flex>

@@ -72,7 +72,9 @@ export default function LoginPage() {
           isAdmin: true,
         })
       } catch (error) {
-        enqueueSnackbar(`Não foi possível fazer login: ${error.message}`, { variant: 'error' })
+        enqueueSnackbar(`Não foi possível fazer login: ${error.message}`, {
+          variant: 'error',
+        })
         setLoading(false)
       }
     } else {
@@ -83,7 +85,9 @@ export default function LoginPage() {
           callbackUrl: '/home',
         })
       } catch (error) {
-        enqueueSnackbar(`Could not login: ${error.message}`, { variant: 'error' })
+        enqueueSnackbar(`Não foi possível fazer login: ${error.message}`, {
+          variant: 'error',
+        })
         setLoading(false)
       }
     }
@@ -187,7 +191,9 @@ export default function LoginPage() {
           onClick={() => router.push('/register')}
         >
           <Flex gap={'small'} justify="center">
-            <Typography.Text type="secondary">Não tem uma conta?</Typography.Text>{' '}
+            <Typography.Text type="secondary">
+              Não tem uma conta?
+            </Typography.Text>{' '}
             <Typography.Text>Cadastre-se</Typography.Text>
           </Flex>
         </Button>
