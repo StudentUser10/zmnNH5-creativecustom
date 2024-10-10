@@ -63,21 +63,21 @@ export default function DesignEditorPage() {
         const { url } = await upload({ file })
         setUploadedImage(url)
         setPreviewUrl(url)
-        enqueueSnackbar('Image uploaded successfully', { variant: 'success' })
+      enqueueSnackbar('Imagem carregada com sucesso', { variant: 'success' })
       } catch (error) {
-        enqueueSnackbar('Failed to upload image', { variant: 'error' })
+        enqueueSnackbar('Falha ao carregar imagem', { variant: 'error' })
       }
     }
   }
 
   const handleSaveDesign = async () => {
     if (!user) {
-      enqueueSnackbar('Please log in to save your design', { variant: 'info' })
+      enqueueSnackbar('Por favor, faça login para salvar seu design', { variant: 'info' })
       return
     }
 
     if (!existingCart) {
-      enqueueSnackbar('Cart not found', { variant: 'error' })
+      enqueueSnackbar('Carrinho não encontrado', { variant: 'error' })
       return
     }
 
@@ -97,18 +97,18 @@ export default function DesignEditorPage() {
         },
       })
 
-      enqueueSnackbar('Design saved to cart', { variant: 'success' })
+      enqueueSnackbar('Design salvo no carrinho', { variant: 'success' })
       router.push('/cart')
     } catch (error) {
       console.error('Error saving design:', error)
-      enqueueSnackbar('Failed to save design', { variant: 'error' })
+      enqueueSnackbar('Falha ao salvar o design', { variant: 'error' })
     }
   }
 
   if (isLoading) {
     return (
       <PageLayout layout="narrow">
-        <Text>Loading...</Text>
+        <Text>Carregando...</Text>
       </PageLayout>
     )
   }
@@ -116,7 +116,7 @@ export default function DesignEditorPage() {
   if (!product) {
     return (
       <PageLayout layout="narrow">
-        <Text>Product not found</Text>
+        <Text>Produto não encontrado</Text>
       </PageLayout>
     )
   }
@@ -124,12 +124,12 @@ export default function DesignEditorPage() {
   return (
     <PageLayout layout="narrow">
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <Title level={2}>Customize Your Product</Title>
-        <Text>Personalize {product.name} with your own design</Text>
+        <Title level={2}>Personalize Seu Produto</Title>
+        <Text>Personalize {product.name} com seu próprio design</Text>
 
         <Row gutter={[16, 16]}>
           <Col xs={24} md={12}>
-            <Card title="Customization Options">
+            <Card title="Opções de Personalização">
               <Space
                 direction="vertical"
                 size="middle"
@@ -137,7 +137,7 @@ export default function DesignEditorPage() {
               >
                 <Input
                   prefix={<EditOutlined />}
-                  placeholder="Add custom text"
+                  placeholder="Adicione texto personalizado"
                   value={customText}
                   onChange={e => setCustomText(e.target.value)}
                 />
@@ -158,20 +158,20 @@ export default function DesignEditorPage() {
                     document.getElementById('image-upload')?.click()
                   }
                 >
-                  Upload Image
+                  Carregar Imagem
                 </Button>
                 <Button
                   type="primary"
                   icon={<SaveOutlined />}
                   onClick={handleSaveDesign}
                 >
-                  Save Design
+                  Salvar Design
                 </Button>
               </Space>
             </Card>
           </Col>
           <Col xs={24} md={12}>
-            <Card title="Preview">
+            <Card title="Visualização">
               <div
                 style={{
                   position: 'relative',
@@ -181,7 +181,7 @@ export default function DesignEditorPage() {
               >
                 <img
                   src={previewUrl}
-                  alt="Product Preview"
+                  alt="Visualização do Produto"
                   style={{
                     position: 'absolute',
                     top: 0,
