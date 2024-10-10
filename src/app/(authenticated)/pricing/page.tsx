@@ -47,14 +47,6 @@ const packages = [
 ]
 
 const PricingCard = ({ plan, isYearly, isPopular }) => {
-  const { mutateAsync: createPaymentLink } =
-    Api.billing.createPaymentLink.useMutation()
-
-  const handleClick = async () => {
-    const { url } = await createPaymentLink({ productId: plan.id })
-    window.open(url, '_blank')
-  }
-
   const price = isYearly ? plan.yearly : plan.monthly
 
   return (
@@ -79,8 +71,8 @@ const PricingCard = ({ plan, isYearly, isPopular }) => {
             </li>
           ))}
         </ul>
-        <button onClick={handleClick} className={`w-full ${isPopular ? 'bg-orange-500 hover:bg-orange-600' : 'bg-blue-600 hover:bg-blue-700'} focus:ring-4 focus:ring-blue-200 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center`}>
-          Começar Agora
+        <button disabled className={`w-full ${isPopular ? 'bg-orange-500 cursor-not-allowed opacity-50' : 'bg-blue-600 cursor-not-allowed opacity-50'} focus:ring-4 focus:ring-blue-200 text-white font-medium rounded-lg text-sm px-5 py-2.5 text-center`}>
+          Em Breve
         </button>
       </div>
     </div>
