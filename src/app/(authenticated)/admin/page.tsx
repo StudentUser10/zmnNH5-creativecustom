@@ -66,11 +66,11 @@ export default function AdminDashboardPage() {
         where: { id: selectedOrder.id },
         data: { status: values.status },
       })
-      alert('Order updated successfully')
+      alert('Pedido atualizado com sucesso')
       setIsOrderModalVisible(false)
       refetchOrders()
     } catch (error) {
-      alert('Failed to update order')
+      alert('Falha ao atualizar o pedido')
     }
   }
 
@@ -86,11 +86,11 @@ export default function AdminDashboardPage() {
         where: { id: selectedProduct.id }, 
         data: { ...values, imageUrl } 
       })
-      message.success('Product updated successfully')
+      message.success('Produto atualizado com sucesso')
       setIsProductModalVisible(false)
       refetchProducts()
     } catch (error) {
-      message.error('Failed to update product: ' + (error.message || 'Unknown error'))
+      message.error('Falha ao atualizar o produto: ' + (error.message || 'Erro desconhecido'))
     } finally {
       setIsUploading(false)
     }
@@ -99,10 +99,10 @@ export default function AdminDashboardPage() {
   const handleProductDelete = async productId => {
     try {
       await deleteProduct({ where: { id: productId } })
-      alert('Product deleted successfully')
+      alert('Produto excluído com sucesso')
       refetchProducts()
     } catch (error) {
-      alert('Failed to delete product')
+      alert('Falha ao excluir o produto')
     }
   }
 
@@ -115,29 +115,29 @@ export default function AdminDashboardPage() {
         imageUrl = url
       }
       await createProduct({ data: { ...values, imageUrl } })
-      message.success('Product added successfully')
+      message.success('Produto adicionado com sucesso')
       setIsAddProductModalVisible(false)
       refetchProducts()
     } catch (error) {
-      message.error('Failed to add product: ' + (error.message || 'Unknown error'))
+      message.error('Falha ao adicionar o produto: ' + (error.message || 'Erro desconhecido'))
     } finally {
       setIsUploading(false)
     }
   }
 
   const orderColumns = [
-    { title: 'Order ID', dataIndex: 'id', key: 'id' },
-    { title: 'Customer', dataIndex: ['user', 'name'], key: 'customer' },
+    { title: 'ID do Pedido', dataIndex: 'id', key: 'id' },
+    { title: 'Cliente', dataIndex: ['user', 'name'], key: 'customer' },
     { title: 'Status', dataIndex: 'status', key: 'status' },
-    { title: 'Total Amount', dataIndex: 'totalAmount', key: 'totalAmount' },
+    { title: 'Valor Total', dataIndex: 'totalAmount', key: 'totalAmount' },
     {
-      title: 'Date',
+      title: 'Data',
       dataIndex: 'dateCreated',
       key: 'dateCreated',
-      render: date => dayjs(date).format('YYYY-MM-DD HH:mm'),
+      render: date => dayjs(date).format('DD/MM/YYYY HH:mm'),
     },
     {
-      title: 'Action',
+      title: 'Ação',
       key: 'action',
       render: (_, record) => (
         <Button
@@ -147,17 +147,17 @@ export default function AdminDashboardPage() {
             setIsOrderModalVisible(true)
           }}
         >
-          Process
+          Processar
         </Button>
       ),
     },
   ]
 
   const productColumns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Price', dataIndex: 'price', key: 'price' },
+    { title: 'Nome', dataIndex: 'name', key: 'name' },
+    { title: 'Preço', dataIndex: 'price', key: 'price' },
     {
-      title: 'Action',
+      title: 'Ação',
       key: 'action',
       render: (_, record) => (
         <>
@@ -168,14 +168,14 @@ export default function AdminDashboardPage() {
               setIsProductModalVisible(true)
             }}
           >
-            Edit
+            Editar
           </Button>
           <Button
             icon={<DeleteOutlined />}
             onClick={() => handleProductDelete(record.id)}
             style={{ marginLeft: 8 }}
           >
-            Delete
+            Excluir
           </Button>
         </>
       ),
@@ -183,34 +183,34 @@ export default function AdminDashboardPage() {
   ]
 
   if (isOrdersLoading || isProductsLoading) {
-    return <PageLayout layout="narrow">Loading...</PageLayout>
+    return <PageLayout layout="narrow">Carregando...</PageLayout>
   }
 
   return (
     <PageLayout layout="narrow">
-      <Title level={2}>Admin Dashboard</Title>
-      <Text>Manage customer orders and products</Text>
+      <Title level={2}>Painel de Administração</Title>
+      <Text>Gerenciar pedidos e produtos dos clientes</Text>
 
       <Title level={3} style={{ marginTop: 24 }}>
-        Customer Orders
+        Pedidos dos Clientes
       </Title>
       <Table dataSource={orders} columns={orderColumns} rowKey="id" />
 
       <Title level={3} style={{ marginTop: 24 }}>
-        Manage Products
+        Gerenciar Produtos
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => setIsAddProductModalVisible(true)}
           style={{ marginLeft: 16 }}
         >
-          Add Product
+          Adicionar Produto
         </Button>
       </Title>
       <Table dataSource={products} columns={productColumns} rowKey="id" />
 
       <Modal
-        title="Process Order"
+        title="Processar Pedido"
         visible={isOrderModalVisible}
         onCancel={() => setIsOrderModalVisible(false)}
         footer={null}
@@ -221,84 +221,84 @@ export default function AdminDashboardPage() {
         >
           <Form.Item name="status" label="Status">
             <Select>
-              <Select.Option value="Pending">Pending</Select.Option>
-              <Select.Option value="Processing">Processing</Select.Option>
-              <Select.Option value="Shipped">Shipped</Select.Option>
-              <Select.Option value="Delivered">Delivered</Select.Option>
+              <Select.Option value="Pending">Pendente</Select.Option>
+              <Select.Option value="Processing">Processando</Select.Option>
+              <Select.Option value="Shipped">Enviado</Select.Option>
+              <Select.Option value="Delivered">Entregue</Select.Option>
             </Select>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
-              Update Order
+              Atualizar Pedido
             </Button>
           </Form.Item>
         </Form>
       </Modal>
 
       <Modal
-        title="Edit Product"
+        title="Editar Produto"
         visible={isProductModalVisible}
         onCancel={() => setIsProductModalVisible(false)}
         footer={null}
       >
         <Form onFinish={handleProductUpdate} initialValues={selectedProduct}>
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'Por favor, insira o nome do produto' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+          <Form.Item name="price" label="Preço" rules={[{ required: true, message: 'Por favor, insira o preço do produto' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="Descrição">
             <Input.TextArea />
           </Form.Item>
-          <Form.Item name="image" label="Image">
+          <Form.Item name="image" label="Imagem">
             <Upload 
               accept="image/*"
               beforeUpload={() => false} 
               maxCount={1}
             >
-              <Button icon={<UploadOutlined />}>Upload Image</Button>
+              <Button icon={<UploadOutlined />}>Carregar Imagem</Button>
             </Upload>
           </Form.Item>
           {selectedProduct?.imageUrl && (
-            <Image src={selectedProduct.imageUrl} alt='Current product image' width={100} />
+            <Image src={selectedProduct.imageUrl} alt='Imagem atual do produto' width={100} />
           )}
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isUploading}>
-              {isUploading ? 'Updating...' : 'Update Product'}
+              {isUploading ? 'Atualizando...' : 'Atualizar Produto'}
             </Button>
           </Form.Item>
         </Form>
       </Modal>
 
       <Modal
-        title="Add Product"
+        title="Adicionar Produto"
         visible={isAddProductModalVisible}
         onCancel={() => setIsAddProductModalVisible(false)}
         footer={null}
       >
         <Form onFinish={handleAddProduct}>
-          <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'Por favor, insira o nome do produto' }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+          <Form.Item name="price" label="Preço" rules={[{ required: true, message: 'Por favor, insira o preço do produto' }]}>
             <Input type="number" />
           </Form.Item>
-          <Form.Item name="description" label="Description">
+          <Form.Item name="description" label="Descrição">
             <Input.TextArea />
           </Form.Item>
-          <Form.Item name="image" label="Image">
+          <Form.Item name="image" label="Imagem">
             <Upload 
               accept="image/*"
               beforeUpload={() => false} 
               maxCount={1}
             >
-              <Button icon={<UploadOutlined />}>Upload Image</Button>
+              <Button icon={<UploadOutlined />}>Carregar Imagem</Button>
             </Upload>
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isUploading}>
-              {isUploading ? 'Adding...' : 'Add Product'}
+              {isUploading ? 'Adicionando...' : 'Adicionar Produto'}
             </Button>
           </Form.Item>
         </Form>
