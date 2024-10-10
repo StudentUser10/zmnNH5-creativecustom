@@ -22,18 +22,18 @@ export default function LoginPage() {
   const errorKey = searchParams.get('error')
 
   const errorMessage = {
-    Signin: 'Try signing in with a different account.',
-    OAuthSignin: 'Try signing in with a different account.',
-    OAuthCallback: 'Try signing in with a different account.',
-    OAuthCreateAccount: 'Try signing in with a different account.',
-    EmailCreateAccount: 'Try signing in with a different account.',
-    Callback: 'Try signing in with a different account.',
+    Signin: 'Tente entrar com uma conta diferente.',
+    OAuthSignin: 'Tente entrar com uma conta diferente.',
+    OAuthCallback: 'Tente entrar com uma conta diferente.',
+    OAuthCreateAccount: 'Tente entrar com uma conta diferente.',
+    EmailCreateAccount: 'Tente entrar com uma conta diferente.',
+    Callback: 'Tente entrar com uma conta diferente.',
     OAuthAccountNotLinked:
-      'To confirm your identity, sign in with the same account you used originally.',
-    EmailSignin: 'Check your email address.',
+      'Para confirmar sua identidade, entre com a mesma conta que você usou originalmente.',
+    EmailSignin: 'Verifique seu endereço de e-mail.',
     CredentialsSignin:
-      'Sign in failed. Check the details you provided are correct.',
-    default: 'Unable to sign in.',
+      'Falha no login. Verifique se os detalhes fornecidos estão corretos.',
+    default: 'Não foi possível fazer login.',
   }[errorKey ?? 'default']
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function LoginPage() {
           isAdmin: true,
         })
       } catch (error) {
-        enqueueSnackbar(`Could not login: ${error.message}`, { variant: 'error' })
+        enqueueSnackbar(`Não foi possível fazer login: ${error.message}`, { variant: 'error' })
         setLoading(false)
       }
     } else {
@@ -109,7 +109,7 @@ export default function LoginPage() {
         }}
         gap="middle"
       >
-        <AppHeader description="Welcome!" />
+        <AppHeader description="Bem-vindo!" />
 
         {errorKey && (
           <Typography.Text type="danger">{errorMessage}</Typography.Text>
@@ -122,21 +122,21 @@ export default function LoginPage() {
           requiredMark={false}
         >
           <Form.Item
-            label="Email"
+            label="E-mail"
             name="email"
-            rules={[{ required: true, message: 'Email is required' }]}
+            rules={[{ required: true, message: 'E-mail é obrigatório' }]}
           >
-            <Input type="email" placeholder="Your email" autoComplete="email" />
+            <Input type="email" placeholder="Seu e-mail" autoComplete="email" />
           </Form.Item>
 
           <Form.Item
-            label="Password"
+            label="Senha"
             name="password"
-            rules={[{ required: true, message: 'Password is required' }]}
+            rules={[{ required: true, message: 'Senha é obrigatória' }]}
           >
             <Input.Password
               type="password"
-              placeholder="Your password"
+              placeholder="Sua senha"
               autoComplete="current-password"
             />
           </Form.Item>
@@ -148,14 +148,14 @@ export default function LoginPage() {
                 onClick={() => router.push('/reset-password')}
                 style={{ padding: 0, margin: 0 }}
               >
-                Forgot password?
+                Esqueceu a senha?
               </Button>
             </Flex>
           </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block loading={isLoading}>
-              Sign in
+              Entrar
             </Button>
           </Form.Item>
         </Form>
@@ -163,7 +163,7 @@ export default function LoginPage() {
         {providers.length > 1 && (
           <>
             <Flex justify="center">
-              <Typography.Text type="secondary">Or</Typography.Text>
+              <Typography.Text type="secondary">Ou</Typography.Text>
             </Flex>
 
             <Flex
@@ -187,8 +187,8 @@ export default function LoginPage() {
           onClick={() => router.push('/register')}
         >
           <Flex gap={'small'} justify="center">
-            <Typography.Text type="secondary">No account?</Typography.Text>{' '}
-            <Typography.Text>Sign up</Typography.Text>
+            <Typography.Text type="secondary">Não tem uma conta?</Typography.Text>{' '}
+            <Typography.Text>Cadastre-se</Typography.Text>
           </Flex>
         </Button>
       </Flex>
