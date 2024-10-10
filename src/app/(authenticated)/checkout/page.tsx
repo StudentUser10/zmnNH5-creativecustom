@@ -29,6 +29,10 @@ export default function CheckoutPage() {
   const { mutateAsync: createOrder } = Api.order.create.useMutation()
 
   const onFinish = async (values: any) => {
+    if (cart?.cartItems.length === 0) {
+      enqueueSnackbar('Não é possível finalizar a compra com o carrinho vazio.', { variant: 'error' });
+      return;
+    }
     setLoading(true)
     try {
       const order = await createOrder({
@@ -193,7 +197,7 @@ export default function CheckoutPage() {
         </Space>
 
         <Form.Item style={{ marginTop: 24 }}>
-          <Button type="primary" htmlType="submit" loading={loading}>
+          <Button type="primary" htmlType="submit" loading={loading} disabled={cart?.cartItems.length === 0}>
             Finalizar Pedido
           </Button>
         </Form.Item>

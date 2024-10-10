@@ -127,8 +127,9 @@ export default function ShoppingCartPage() {
                 type="primary"
                 icon={<ShoppingCartOutlined />}
                 onClick={handleCheckout}
+                disabled={cartItems.length === 0}
               >
-                Finalizar Compra
+                {cartItems.length === 0 ? 'Carrinho Vazio' : 'Finalizar Compra'}
               </Button>
             </Space>
           </Card>
