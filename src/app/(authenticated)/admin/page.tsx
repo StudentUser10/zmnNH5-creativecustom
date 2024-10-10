@@ -1,13 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Typography, Table, Button, Modal, Form, Input, Select, Upload, Image } from 'antd'
+import { Typography, Table, Button, Modal, Form, Input, Select, Upload, Image, message } from 'antd'
 import {
   ShoppingCartOutlined,
   EditOutlined,
   DeleteOutlined,
   PlusOutlined,
   UploadOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons'
 const { Title, Text } = Typography
 import { useUserContext } from '@/core/context'
@@ -27,6 +28,8 @@ export default function AdminDashboardPage() {
   const [isAddProductModalVisible, setIsAddProductModalVisible] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const { mutateAsync: upload } = useUploadPublic()
 
   const {
     data: ordersData,
@@ -72,13 +75,24 @@ export default function AdminDashboardPage() {
   }
 
   const handleProductUpdate = async values => {
+    setIsUploading(true)
     try {
-      await updateProduct({ where: { id: selectedProduct.id }, data: values })
-      alert('Product updated successfully')
+      let imageUrl = selectedProduct.imageUrl
+      if (values.image && values.image[0]) {
+        const { url } = await upload({ file: values.image[0].originFileObj })
+        imageUrl = url
+      }
+      await updateProduct({ 
+        where: { id: selectedProduct.id }, 
+        data: { ...values, imageUrl } 
+      })
+      message.success('Product updated successfully')
       setIsProductModalVisible(false)
       refetchProducts()
     } catch (error) {
-      alert('Failed to update product')
+      message.error('Failed to update product: ' + (error.message || 'Unknown error'))
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -93,13 +107,21 @@ export default function AdminDashboardPage() {
   }
 
   const handleAddProduct = async values => {
+    setIsUploading(true)
     try {
-      await createProduct({ data: values })
-      alert('Product added successfully')
+      let imageUrl = ''
+      if (values.image && values.image[0]) {
+        const { url } = await upload({ file: values.image[0].originFileObj })
+        imageUrl = url
+      }
+      await createProduct({ data: { ...values, imageUrl } })
+      message.success('Product added successfully')
       setIsAddProductModalVisible(false)
       refetchProducts()
     } catch (error) {
-      alert('Failed to add product')
+      message.error('Failed to add product: ' + (error.message || 'Unknown error'))
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -230,7 +252,11 @@ export default function AdminDashboardPage() {
             <Input.TextArea />
           </Form.Item>
           <Form.Item name="image" label="Image">
-            <Upload beforeUpload={() => false} maxCount={1}>
+            <Upload 
+              accept="image/*"
+              beforeUpload={() => false} 
+              maxCount={1}
+            >
               <Button icon={<UploadOutlined />}>Upload Image</Button>
             </Upload>
           </Form.Item>
@@ -238,8 +264,8 @@ export default function AdminDashboardPage() {
             <Image src={selectedProduct.imageUrl} alt='Current product image' width={100} />
           )}
           <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Update Product
+            <Button type="primary" htmlType="submit" loading={isUploading}>
+              {isUploading ? 'Updating...' : 'Update Product'}
             </Button>
           </Form.Item>
         </Form>
@@ -262,13 +288,17 @@ export default function AdminDashboardPage() {
             <Input.TextArea />
           </Form.Item>
           <Form.Item name="image" label="Image">
-            <Upload beforeUpload={() => false} maxCount={1}>
+            <Upload 
+              accept="image/*"
+              beforeUpload={() => false} 
+              maxCount={1}
+            >
               <Button icon={<UploadOutlined />}>Upload Image</Button>
             </Upload>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Add Product
+            <Button type="primary" htmlType="submit" loading={isUploading}>
+              {isUploading ? 'Adding...' : 'Add Product'}
             </Button>
           </Form.Item>
         </Form>
