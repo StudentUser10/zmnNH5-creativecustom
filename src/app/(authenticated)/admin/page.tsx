@@ -83,7 +83,7 @@ export default function AdminDashboardPage() {
       if (values.image && values.image[0]) {
         const file = values.image[0].originFileObj
         const { url } = await upload({ file })
-        imageUrl = url
+        imageUrl = url || '/path/to/placeholder.jpg'
       }
       const { image, ...dataToUpdate } = values
       const updatedProduct = await updateProduct({ 
@@ -101,21 +101,12 @@ export default function AdminDashboardPage() {
     }
   }
 
-  const handlePreview = async file => {
+  const handlePreview = file => {
     if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
+      file.preview = URL.createObjectURL(file.originFileObj);
     }
     setPreviewImage(file.url || file.preview);
     setPreviewVisible(true);
-  };
-
-  const getBase64 = file => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-    });
   };
 
   const handleProductDelete = async productId => {
@@ -135,13 +126,13 @@ export default function AdminDashboardPage() {
       if (values.image && values.image[0]) {
         const file = values.image[0].originFileObj
         const { url } = await upload({ file })
-        imageUrl = url
+        imageUrl = url || '/path/to/placeholder.jpg'
       }
       const { image, ...productData } = values;
-      await createProduct({ data: { ...productData, imageUrl } })
+      const newProduct = await createProduct({ data: { ...productData, imageUrl } });
+      setProducts(prevProducts => [...prevProducts, newProduct]);
       message.success('Produto adicionado com sucesso')
       setIsAddProductModalVisible(false)
-      refetchProducts()
     } catch (error) {
       message.error('Falha ao adicionar o produto: ' + (error.message || 'Erro desconhecido'))
     } finally {
@@ -184,9 +175,13 @@ export default function AdminDashboardPage() {
       key: 'image',
       render: (imageUrl) => (
         <Image 
-          src={`${imageUrl}?t=${Date.now()}`} 
+          src={imageUrl || '/path/to/placeholder.jpg'}
           alt="Imagem do produto" 
-          width={50} 
+          width={100}
+          preview={false}
+          onError={(e) => {
+            e.currentTarget.src = '/path/to/placeholder.jpg';
+          }}
         />
       ),
     },
@@ -287,18 +282,31 @@ export default function AdminDashboardPage() {
           <Form.Item name="description" label="Descrição">
             <Input.TextArea />
           </Form.Item>
-          <Form.Item name="image" label="Arquivo">
-            <Upload 
-              beforeUpload={() => false} 
-              maxCount={1}
-              onPreview={handlePreview}
-              listType="picture-card"
-            >
-              <Button icon={<UploadOutlined />}>Carregar Arquivo</Button>
-            </Upload>
+          <Form.Item label="Tipo de Imagem">
+            <Select value={imageType} onChange={(value) => setImageType(value)}>
+              <Select.Option value="file">Arquivo</Select.Option>
+              <Select.Option value="url">URL</Select.Option>
+            </Select>
           </Form.Item>
+          {imageType === 'file' ? (
+            <Form.Item name="image" label="Arquivo">
+              <Upload 
+                beforeUpload={() => false} 
+                maxCount={1}
+                onPreview={handlePreview}
+                listType="picture-card"
+                accept="image/*"
+              >
+                <Button icon={<UploadOutlined />}>Carregar Arquivo</Button>
+              </Upload>
+            </Form.Item>
+          ) : (
+            <Form.Item name="imageUrl" label="URL da Imagem" rules={[{ type: 'url', message: 'Por favor, insira uma URL válida' }]}>
+              <Input />
+            </Form.Item>
+          )}
           {selectedProduct?.imageUrl && (
-            <Image src={`${selectedProduct.imageUrl}?t=${Date.now()}`} alt='Imagem atual do produto' width={100} />
+            <Image src={selectedProduct.imageUrl} alt='Imagem atual do produto' width={100} />
           )}
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isUploading}>
@@ -313,7 +321,7 @@ export default function AdminDashboardPage() {
         footer={null}
         onCancel={() => setPreviewVisible(false)}
       >
-        <img alt="Pré-visualização" style={{ width: '100%' }} src={previewImage} />
+        <img alt="Pré-visualização" style={{ width: '100%', maxHeight: '80vh', objectFit: 'contain' }} src={previewImage} />
       </Modal>
 
       <Modal
@@ -332,16 +340,29 @@ export default function AdminDashboardPage() {
           <Form.Item name="description" label="Descrição">
             <Input.TextArea />
           </Form.Item>
-          <Form.Item name="image" label="Arquivo">
-            <Upload 
-              beforeUpload={() => false} 
-              maxCount={1}
-              onPreview={handlePreview}
-              listType="picture-card"
-            >
-              <Button icon={<UploadOutlined />}>Carregar Arquivo</Button>
-            </Upload>
+          <Form.Item label="Tipo de Imagem">
+            <Select value={imageType} onChange={(value) => setImageType(value)}>
+              <Select.Option value="file">Arquivo</Select.Option>
+              <Select.Option value="url">URL</Select.Option>
+            </Select>
           </Form.Item>
+          {imageType === 'file' ? (
+            <Form.Item name="image" label="Arquivo">
+              <Upload 
+                beforeUpload={() => false} 
+                maxCount={1}
+                onPreview={handlePreview}
+                listType="picture-card"
+                accept="image/*"
+              >
+                <Button icon={<UploadOutlined />}>Carregar Arquivo</Button>
+              </Upload>
+            </Form.Item>
+          ) : (
+            <Form.Item name="imageUrl" label="URL da Imagem" rules={[{ type: 'url', message: 'Por favor, insira uma URL válida' }]}>
+              <Input />
+            </Form.Item>
+          )}
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isUploading}>
               {isUploading ? 'Adicionando...' : 'Adicionar Produto'}
