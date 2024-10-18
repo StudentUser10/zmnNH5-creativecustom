@@ -31,6 +31,7 @@ export default function AdminDashboardPage() {
   const [isUploading, setIsUploading] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
   const [previewVisible, setPreviewVisible] = useState(false)
+  const [imageType, setImageType] = useState('file')
   const { mutateAsync: upload } = useUploadPublic()
 
   const {
@@ -283,7 +284,7 @@ export default function AdminDashboardPage() {
             <Input.TextArea />
           </Form.Item>
           <Form.Item label="Tipo de Imagem">
-            <Select value={imageType} onChange={(value) => setImageType(value)}>
+            <Select value={imageType} onChange={setImageType}>
               <Select.Option value="file">Arquivo</Select.Option>
               <Select.Option value="url">URL</Select.Option>
             </Select>
@@ -341,7 +342,7 @@ export default function AdminDashboardPage() {
             <Input.TextArea />
           </Form.Item>
           <Form.Item label="Tipo de Imagem">
-            <Select value={imageType} onChange={(value) => setImageType(value)}>
+            <Select value={imageType} onChange={setImageType}>
               <Select.Option value="file">Arquivo</Select.Option>
               <Select.Option value="url">URL</Select.Option>
             </Select>
