@@ -86,13 +86,14 @@ export default function AdminDashboardPage() {
         imageUrl = url
       }
       const { image, ...dataToUpdate } = values
-      await updateProduct({ 
+      const updatedProduct = await updateProduct({ 
         where: { id: selectedProduct.id }, 
         data: { ...dataToUpdate, imageUrl } 
       })
       message.success('Produto atualizado com sucesso')
       setIsProductModalVisible(false)
-      refetchProducts()
+      await refetchProducts()
+      setSelectedProduct(updatedProduct)
     } catch (error) {
       message.error('Falha ao atualizar o produto: ' + (error.message || 'Erro desconhecido'))
     } finally {
@@ -176,6 +177,18 @@ export default function AdminDashboardPage() {
   ]
 
   const productColumns = [
+    { 
+      title: 'Imagem', 
+      dataIndex: 'imageUrl', 
+      key: 'image',
+      render: (imageUrl) => (
+        <Image 
+          src={`${imageUrl}?t=${Date.now()}`} 
+          alt="Imagem do produto" 
+          width={50} 
+        />
+      ),
+    },
     { title: 'Nome', dataIndex: 'name', key: 'name' },
     { title: 'Preço', dataIndex: 'price', key: 'price' },
     {
@@ -284,7 +297,7 @@ export default function AdminDashboardPage() {
             </Upload>
           </Form.Item>
           {selectedProduct?.imageUrl && (
-            <Image src={selectedProduct.imageUrl} alt='Imagem atual do produto' width={100} />
+            <Image src={`${selectedProduct.imageUrl}?t=${Date.now()}`} alt='Imagem atual do produto' width={100} />
           )}
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isUploading}>
