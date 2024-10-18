@@ -75,11 +75,15 @@ export default function DesignEditorPage() {
   ) => {
     const file = event.target.files?.[0]
     if (file) {
+      if (!file.type.startsWith('image/')) {
+        enqueueSnackbar('Por favor, selecione um arquivo de imagem válido', { variant: 'error' })
+        return
+      }
       try {
         const { url } = await upload({ file })
         setUploadedImage(url)
         setPreviewUrl(url)
-      enqueueSnackbar('Imagem carregada com sucesso', { variant: 'success' })
+        enqueueSnackbar('Imagem carregada com sucesso', { variant: 'success' })
       } catch (error) {
         enqueueSnackbar('Falha ao carregar imagem', { variant: 'error' })
       }
@@ -168,7 +172,6 @@ export default function DesignEditorPage() {
                 />
                 <input
                   type="file"
-                  accept="image/*"
                   onChange={handleImageUpload}
                   style={{ display: 'none' }}
                   id="image-upload"
