@@ -157,7 +157,7 @@ export default function LandingPage() {
     },
     {
       question: `Quais são as opções de pagamento disponíveis?`,
-      answer: `Aceitamos cartões de crédito, débito, boleto bancário e PIX para sua conveniência.`,
+      answer: `Aceitamos no momento apenas cartões de crédito e débito`,
     },
     {
       question: `Vocês oferecem amostras antes de fazer um pedido grande?`,
