@@ -79,12 +79,14 @@ export default function AdminDashboardPage() {
     try {
       let imageUrl = selectedProduct.imageUrl
       if (values.image && values.image[0]) {
-        const { url } = await upload({ file: values.image[0].originFileObj })
+        const file = values.image[0].originFileObj
+        const { url } = await upload({ file })
         imageUrl = url
       }
+      const { image, ...dataToUpdate } = values
       await updateProduct({ 
         where: { id: selectedProduct.id }, 
-        data: { ...values, imageUrl } 
+        data: { ...dataToUpdate, imageUrl } 
       })
       message.success('Produto atualizado com sucesso')
       setIsProductModalVisible(false)
@@ -111,7 +113,8 @@ export default function AdminDashboardPage() {
     try {
       let imageUrl = ''
       if (values.image && values.image[0]) {
-        const { url } = await upload({ file: values.image[0].originFileObj })
+        const file = values.image[0].originFileObj
+        const { url } = await upload({ file })
         imageUrl = url
       }
       await createProduct({ data: { ...values, imageUrl } })
@@ -251,13 +254,12 @@ export default function AdminDashboardPage() {
           <Form.Item name="description" label="Descrição">
             <Input.TextArea />
           </Form.Item>
-          <Form.Item name="image" label="Imagem">
+          <Form.Item name="image" label="Arquivo">
             <Upload 
-              accept="image/*"
               beforeUpload={() => false} 
               maxCount={1}
             >
-              <Button icon={<UploadOutlined />}>Carregar Imagem</Button>
+              <Button icon={<UploadOutlined />}>Carregar Arquivo</Button>
             </Upload>
           </Form.Item>
           {selectedProduct?.imageUrl && (
@@ -287,13 +289,12 @@ export default function AdminDashboardPage() {
           <Form.Item name="description" label="Descrição">
             <Input.TextArea />
           </Form.Item>
-          <Form.Item name="image" label="Imagem">
+          <Form.Item name="image" label="Arquivo">
             <Upload 
-              accept="image/*"
               beforeUpload={() => false} 
               maxCount={1}
             >
-              <Button icon={<UploadOutlined />}>Carregar Imagem</Button>
+              <Button icon={<UploadOutlined />}>Carregar Arquivo</Button>
             </Upload>
           </Form.Item>
           <Form.Item>
