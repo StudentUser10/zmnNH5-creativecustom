@@ -137,7 +137,8 @@ export default function AdminDashboardPage() {
         const { url } = await upload({ file })
         imageUrl = url
       }
-      await createProduct({ data: { ...values, imageUrl } })
+      const { image, ...productData } = values;
+      await createProduct({ data: { ...productData, imageUrl } })
       message.success('Produto adicionado com sucesso')
       setIsAddProductModalVisible(false)
       refetchProducts()
