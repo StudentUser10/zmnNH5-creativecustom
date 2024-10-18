@@ -1,6 +1,6 @@
 'use client'
 
-import { Avatar, Button, Flex, Form, Input, Switch, Typography } from 'antd'
+import { Avatar, Button, Flex, Form, Input, Switch, Typography, Upload } from 'antd'
 
 import { useUserContext } from '@/core/context'
 import { Utility } from '@/core/helpers/utility'
@@ -10,6 +10,7 @@ import { User } from '@prisma/client'
 import { signOut } from 'next-auth/react'
 import { useSnackbar } from 'notistack'
 import { useEffect, useState } from 'react'
+import { useUploadPublic } from '@/core/hooks/upload'
 
 export default function ProfilePage() {
   const { enqueueSnackbar } = useSnackbar()
@@ -19,8 +20,10 @@ export default function ProfilePage() {
 
   const [isLoading, setLoading] = useState(false)
   const [isLoadingLogout, setLoadingLogout] = useState(false)
+  const [imageUrl, setImageUrl] = useState(user.pictureUrl)
 
   const { mutateAsync: updateUser } = Api.user.update.useMutation()
+  const { mutateAsync: upload } = useUploadPublic()
 
   useEffect(() => {
     form.setFieldsValue(user)
@@ -35,11 +38,12 @@ export default function ProfilePage() {
         data: {
           email: values.email,
           name: values.name,
-          pictureUrl: values.pictureUrl,
+          pictureUrl: imageUrl,
         },
       })
 
       refetchUser()
+      enqueueSnackbar('Profile updated successfully', { variant: 'success' })
     } catch (error) {
       enqueueSnackbar(`Could not save user: ${error.message}`, {
         variant: 'error',
@@ -47,6 +51,19 @@ export default function ProfilePage() {
     }
 
     setLoading(false)
+  }
+
+  const handleImageUpload = async (info: any) => {
+    const { status, originFileObj } = info.file
+    if (status === 'done') {
+      try {
+        const { url } = await upload({ file: originFileObj })
+        setImageUrl(url)
+        enqueueSnackbar('Image uploaded successfully', { variant: 'success' })
+      } catch (error) {
+        enqueueSnackbar(`Failed to upload image: ${error.message}`, { variant: 'error' })
+      }
+    }
   }
 
   const handleClickLogout = async () => {
@@ -73,7 +90,7 @@ export default function ProfilePage() {
       </Flex>
 
       <Flex justify="center" style={{ marginBottom: '30px' }}>
-        <Avatar size={80} src={user.pictureUrl}>
+        <Avatar size={80} src={imageUrl}>
           {Utility.stringToInitials(user.name)}
         </Avatar>
       </Flex>
@@ -102,7 +119,20 @@ export default function ProfilePage() {
         </Form.Item>
 
         <Form.Item label="Profile picture" name="pictureUrl">
-          <Input />
+          <Upload
+            accept="image/*"
+            listType="picture-card"
+            showUploadList={false}
+            onChange={handleImageUpload}
+          >
+            {imageUrl ? (
+              <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
+            ) : (
+              <div>
+                <div style={{ marginTop: 8 }}>Upload</div>
+              </div>
+            )}
+          </Upload>
         </Form.Item>
 
         <Form.Item>
