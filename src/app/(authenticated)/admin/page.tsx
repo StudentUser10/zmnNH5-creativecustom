@@ -29,6 +29,8 @@ export default function AdminDashboardPage() {
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [previewImage, setPreviewImage] = useState('')
+  const [previewVisible, setPreviewVisible] = useState(false)
   const { mutateAsync: upload } = useUploadPublic()
 
   const {
@@ -97,6 +99,23 @@ export default function AdminDashboardPage() {
       setIsUploading(false)
     }
   }
+
+  const handlePreview = async file => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewVisible(true);
+  };
+
+  const getBase64 = file => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  };
 
   const handleProductDelete = async productId => {
     try {
@@ -258,6 +277,8 @@ export default function AdminDashboardPage() {
             <Upload 
               beforeUpload={() => false} 
               maxCount={1}
+              onPreview={handlePreview}
+              listType="picture-card"
             >
               <Button icon={<UploadOutlined />}>Carregar Arquivo</Button>
             </Upload>
@@ -271,6 +292,14 @@ export default function AdminDashboardPage() {
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal
+        visible={previewVisible}
+        title="Pré-visualização da Imagem"
+        footer={null}
+        onCancel={() => setPreviewVisible(false)}
+      >
+        <img alt="Pré-visualização" style={{ width: '100%' }} src={previewImage} />
       </Modal>
 
       <Modal
@@ -293,6 +322,8 @@ export default function AdminDashboardPage() {
             <Upload 
               beforeUpload={() => false} 
               maxCount={1}
+              onPreview={handlePreview}
+              listType="picture-card"
             >
               <Button icon={<UploadOutlined />}>Carregar Arquivo</Button>
             </Upload>
@@ -303,6 +334,14 @@ export default function AdminDashboardPage() {
             </Button>
           </Form.Item>
         </Form>
+      </Modal>
+      <Modal
+        visible={previewVisible}
+        title="Pré-visualização da Imagem"
+        footer={null}
+        onCancel={() => setPreviewVisible(false)}
+      >
+        <img alt="Pré-visualização" style={{ width: '100%' }} src={previewImage} />
       </Modal>
     </PageLayout>
   )
