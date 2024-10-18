@@ -36,13 +36,14 @@ export default function DesignEditorPage() {
     where: { id: params.productId },
   })
 
-  const { data: existingCart, error: cartError } = Api.cart.findFirst.useQuery({
+  const { data: existingCart, error: cartError, refetch: refetchCart } = Api.cart.findFirst.useQuery({
     where: { userId: user?.id },
   }, {
     enabled: !!user
   })
 
   const { mutateAsync: createCartItem } = Api.cartItem.create.useMutation()
+  const { mutateAsync: createCart } = Api.cart.create.useMutation()
 
   useEffect(() => {
     if (product && typeof product.imageUrl === 'string') {
@@ -53,6 +54,21 @@ export default function DesignEditorPage() {
       enqueueSnackbar('Failed to fetch cart', { variant: 'error' })
     }
   }, [product, cartError])
+
+  useEffect(() => {
+    const ensureCartExists = async () => {
+      if (user && !existingCart && !cartError) {
+        try {
+          await createCart({ data: { userId: user.id } })
+          await refetchCart()
+        } catch (error) {
+          console.error('Error creating cart:', error)
+          enqueueSnackbar('Failed to create cart', { variant: 'error' })
+        }
+      }
+    }
+    ensureCartExists()
+  }, [user, existingCart, cartError, createCart, refetchCart])
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -76,12 +92,13 @@ export default function DesignEditorPage() {
       return
     }
 
-    if (!existingCart) {
-      enqueueSnackbar('Carrinho não encontrado', { variant: 'error' })
-      return
-    }
-
     try {
+      let cart = existingCart
+      if (!cart) {
+        cart = await createCart({ data: { userId: user.id } })
+        await refetchCart()
+      }
+
       const customizationData = JSON.stringify({
         text: customText,
         color: customColor,
@@ -93,7 +110,7 @@ export default function DesignEditorPage() {
           quantity: 1,
           customizationData,
           productId: params.productId,
-          cartId: existingCart.id,
+          cartId: cart.id,
         },
       })
 
@@ -101,7 +118,11 @@ export default function DesignEditorPage() {
       router.push('/cart')
     } catch (error) {
       console.error('Error saving design:', error)
-      enqueueSnackbar('Falha ao salvar o design', { variant: 'error' })
+      if (error instanceof Error) {
+        enqueueSnackbar(`Falha ao salvar o design: ${error.message}`, { variant: 'error' })
+      } else {
+        enqueueSnackbar('Falha ao salvar o design', { variant: 'error' })
+      }
     }
   }
 
