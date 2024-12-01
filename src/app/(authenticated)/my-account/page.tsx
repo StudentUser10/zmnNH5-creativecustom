@@ -1,21 +1,22 @@
 'use client'
 
-import { Typography, Spin, Card, List, Button, Row, Col, Modal } from 'antd'
-import {
-  UserOutlined,
-  HistoryOutlined,
-  ReloadOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons'
-const { Title, Text } = Typography
 import { useUserContext } from '@/core/context'
-import { useRouter, useParams } from 'next/navigation'
-import { useUploadPublic } from '@/core/hooks/upload'
-import { useSnackbar } from 'notistack'
-import dayjs from 'dayjs'
 import { Api } from '@/core/trpc'
 import { PageLayout } from '@/designSystem'
+import {
+  DeleteOutlined,
+  HistoryOutlined,
+  LogoutOutlined,
+  ReloadOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
+import { Button, Card, Col, List, Modal, Row, Spin, Typography } from 'antd'
+import dayjs from 'dayjs'
+import { signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useSnackbar } from 'notistack'
 import { useState } from 'react'
+const { Title, Text } = Typography
 
 export default function MyAccountPage() {
   const router = useRouter()
@@ -61,17 +62,30 @@ export default function MyAccountPage() {
   const handleDeleteAccount = async () => {
     try {
       await deleteAccount({ where: { id: user?.id } })
-      enqueueSnackbar('Conta excluída com sucesso. Redirecionando para a página inicial.', { variant: 'success' })
+      enqueueSnackbar(
+        'Conta excluída com sucesso. Redirecionando para a página inicial.',
+        { variant: 'success' },
+      )
       router.push('/')
     } catch (error) {
       enqueueSnackbar('Falha ao excluir a conta', { variant: 'error' })
     }
   }
 
+  const handleLogout = async () => {
+    try {
+      await signOut({ callbackUrl: '/login' })
+    } catch (error) {
+      enqueueSnackbar('Falha ao sair da conta', { variant: 'error' })
+    }
+  }
+
   return (
     <PageLayout layout="narrow">
       <Title level={2}>Minha Conta</Title>
-      <Text>Gerencie suas informações de conta e visualize seu histórico de pedidos.</Text>
+      <Text>
+        Gerencie suas informações de conta e visualize seu histórico de pedidos.
+      </Text>
 
       <Card style={{ marginTop: 24 }}>
         <Row gutter={[16, 16]}>
@@ -93,6 +107,13 @@ export default function MyAccountPage() {
                   style={{ marginTop: '16px' }}
                 >
                   Excluir Conta
+                </Button>
+                <Button
+                  icon={<LogoutOutlined />}
+                  onClick={handleLogout}
+                  style={{ marginTop: '16px', marginLeft: '8px' }}
+                >
+                  Sair da Conta
                 </Button>
               </>
             ) : (
@@ -126,7 +147,9 @@ export default function MyAccountPage() {
                         <>
                           <Text>
                             Data:{' '}
-                            {dayjs(order.dateCreated).locale('pt-br').format('D [de] MMMM [de] YYYY')}
+                            {dayjs(order.dateCreated)
+                              .locale('pt-br')
+                              .format('D [de] MMMM [de] YYYY')}
                           </Text>
                           <br />
                           <Text>Total: R${order.totalAmount}</Text>
@@ -151,7 +174,10 @@ export default function MyAccountPage() {
         okText="Confirmar"
         cancelText="Cancelar"
       >
-        <p>Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.</p>
+        <p>
+          Tem certeza que deseja excluir sua conta? Esta ação não pode ser
+          desfeita.
+        </p>
       </Modal>
     </PageLayout>
   )
