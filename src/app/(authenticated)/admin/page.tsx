@@ -1,22 +1,33 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Typography, Table, Button, Modal, Form, Input, Select, Upload, Image, message } from 'antd'
-import {
-  ShoppingCartOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  UploadOutlined,
-  LoadingOutlined,
-} from '@ant-design/icons'
-const { Title, Text } = Typography
 import { useUserContext } from '@/core/context'
-import { useRouter, useParams } from 'next/navigation'
 import { useUploadPublic } from '@/core/hooks/upload'
-import dayjs from 'dayjs'
 import { Api } from '@/core/trpc'
 import { PageLayout } from '@/designSystem'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  ShoppingCartOutlined,
+  UploadOutlined,
+} from '@ant-design/icons'
+import {
+  Button,
+  Form,
+  Image,
+  Input,
+  message,
+  Modal,
+  Select,
+  Switch,
+  Table,
+  Typography,
+  Upload,
+} from 'antd'
+import dayjs from 'dayjs'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+const { Title, Text } = Typography
 
 export default function AdminDashboardPage() {
   const router = useRouter()
@@ -25,14 +36,17 @@ export default function AdminDashboardPage() {
   const [products, setProducts] = useState([])
   const [isOrderModalVisible, setIsOrderModalVisible] = useState(false)
   const [isProductModalVisible, setIsProductModalVisible] = useState(false)
-  const [isAddProductModalVisible, setIsAddProductModalVisible] = useState(false)
+  const [isAddProductModalVisible, setIsAddProductModalVisible] =
+    useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [isUploading, setIsUploading] = useState(false)
   const [previewImage, setPreviewImage] = useState('')
   const [previewVisible, setPreviewVisible] = useState(false)
   const [imageType, setImageType] = useState('file')
+  const [generateMockup, setGenerateMockup] = useState(false)
   const { mutateAsync: upload } = useUploadPublic()
+  const { mutateAsync: generateImage } = Api.ai.generateImage.useMutation()
 
   const {
     data: ordersData,
@@ -58,7 +72,10 @@ export default function AdminDashboardPage() {
     if (productsData) setProducts(productsData)
   }, [ordersData, productsData])
 
-  if (!user || (user.email !== "admin@admin.com" && user.globalRole !== 'ADMIN')) {
+  if (
+    !user ||
+    (user.email !== 'admin@admin.com' && user.globalRole !== 'ADMIN')
+  ) {
     router.push('/home')
     return null
   }
@@ -86,17 +103,26 @@ export default function AdminDashboardPage() {
         const { url } = await upload({ file })
         imageUrl = url || '/path/to/placeholder.jpg'
       }
+      if (generateMockup) {
+        const { url } = await generateImage({
+          prompt: `Generate a mockup for product: ${values.name}`,
+        })
+        imageUrl = url
+      }
       const { image, ...dataToUpdate } = values
-      const updatedProduct = await updateProduct({ 
-        where: { id: selectedProduct.id }, 
-        data: { ...dataToUpdate, imageUrl } 
+      const updatedProduct = await updateProduct({
+        where: { id: selectedProduct.id },
+        data: { ...dataToUpdate, imageUrl },
       })
       message.success('Produto atualizado com sucesso')
       setIsProductModalVisible(false)
       await refetchProducts()
       setSelectedProduct(updatedProduct)
     } catch (error) {
-      message.error('Falha ao atualizar o produto: ' + (error.message || 'Erro desconhecido'))
+      message.error(
+        'Falha ao atualizar o produto: ' +
+          (error.message || 'Erro desconhecido'),
+      )
     } finally {
       setIsUploading(false)
     }
@@ -104,11 +130,11 @@ export default function AdminDashboardPage() {
 
   const handlePreview = file => {
     if (!file.url && !file.preview) {
-      file.preview = URL.createObjectURL(file.originFileObj);
+      file.preview = URL.createObjectURL(file.originFileObj)
     }
-    setPreviewImage(file.url || file.preview);
-    setPreviewVisible(true);
-  };
+    setPreviewImage(file.url || file.preview)
+    setPreviewVisible(true)
+  }
 
   const handleProductDelete = async productId => {
     try {
@@ -129,13 +155,24 @@ export default function AdminDashboardPage() {
         const { url } = await upload({ file })
         imageUrl = url || '/path/to/placeholder.jpg'
       }
-      const { image, ...productData } = values;
-      const newProduct = await createProduct({ data: { ...productData, imageUrl } });
-      setProducts(prevProducts => [...prevProducts, newProduct]);
+      if (generateMockup) {
+        const { url } = await generateImage({
+          prompt: `Generate a mockup for product: ${values.name}`,
+        })
+        imageUrl = url
+      }
+      const { image, ...productData } = values
+      const newProduct = await createProduct({
+        data: { ...productData, imageUrl },
+      })
+      setProducts(prevProducts => [...prevProducts, newProduct])
       message.success('Produto adicionado com sucesso')
       setIsAddProductModalVisible(false)
     } catch (error) {
-      message.error('Falha ao adicionar o produto: ' + (error.message || 'Erro desconhecido'))
+      message.error(
+        'Falha ao adicionar o produto: ' +
+          (error.message || 'Erro desconhecido'),
+      )
     } finally {
       setIsUploading(false)
     }
@@ -170,18 +207,18 @@ export default function AdminDashboardPage() {
   ]
 
   const productColumns = [
-    { 
-      title: 'Imagem', 
-      dataIndex: 'imageUrl', 
+    {
+      title: 'Imagem',
+      dataIndex: 'imageUrl',
       key: 'image',
-      render: (imageUrl) => (
-        <Image 
+      render: imageUrl => (
+        <Image
           src={imageUrl || '/path/to/placeholder.jpg'}
-          alt="Imagem do produto" 
+          alt="Imagem do produto"
           width={100}
           preview={false}
-          onError={(e) => {
-            e.currentTarget.src = '/path/to/placeholder.jpg';
+          onError={e => {
+            e.currentTarget.src = '/path/to/placeholder.jpg'
           }}
         />
       ),
@@ -274,10 +311,28 @@ export default function AdminDashboardPage() {
         footer={null}
       >
         <Form onFinish={handleProductUpdate} initialValues={selectedProduct}>
-          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'Por favor, insira o nome do produto' }]}>
+          <Form.Item
+            name="name"
+            label="Nome"
+            rules={[
+              {
+                required: true,
+                message: 'Por favor, insira o nome do produto',
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="price" label="Preço" rules={[{ required: true, message: 'Por favor, insira o preço do produto' }]}>
+          <Form.Item
+            name="price"
+            label="Preço"
+            rules={[
+              {
+                required: true,
+                message: 'Por favor, insira o preço do produto',
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
           <Form.Item name="description" label="Descrição">
@@ -291,8 +346,8 @@ export default function AdminDashboardPage() {
           </Form.Item>
           {imageType === 'file' ? (
             <Form.Item name="image" label="Arquivo">
-              <Upload 
-                beforeUpload={() => false} 
+              <Upload
+                beforeUpload={() => false}
                 maxCount={1}
                 onPreview={handlePreview}
                 listType="picture-card"
@@ -302,13 +357,39 @@ export default function AdminDashboardPage() {
               </Upload>
             </Form.Item>
           ) : (
-            <Form.Item name="imageUrl" label="URL da Imagem" rules={[{ type: 'url', message: 'Por favor, insira uma URL válida' }]}>
+            <Form.Item
+              name="imageUrl"
+              label="URL da Imagem"
+              rules={[
+                { type: 'url', message: 'Por favor, insira uma URL válida' },
+              ]}
+            >
               <Input />
             </Form.Item>
           )}
+          <Form.Item>
+            <Switch
+              checked={generateMockup}
+              onChange={setGenerateMockup}
+              checkedChildren="Gerar Mockup"
+              unCheckedChildren="Mockup Desativado"
+            />
+          </Form.Item>
           {selectedProduct?.imageUrl && (
-            <Image src={selectedProduct.imageUrl} alt='Imagem atual do produto' width={100} />
+            <Image
+              src={selectedProduct.imageUrl}
+              alt="Imagem atual do produto"
+              width={100}
+            />
           )}
+          <Form.Item>
+            <Switch
+              checked={generateMockup}
+              onChange={setGenerateMockup}
+              checkedChildren="Gerar Mockup"
+              unCheckedChildren="Mockup Desativado"
+            />
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isUploading}>
               {isUploading ? 'Atualizando...' : 'Atualizar Produto'}
@@ -322,7 +403,11 @@ export default function AdminDashboardPage() {
         footer={null}
         onCancel={() => setPreviewVisible(false)}
       >
-        <img alt="Pré-visualização" style={{ width: '100%', maxHeight: '80vh', objectFit: 'contain' }} src={previewImage} />
+        <img
+          alt="Pré-visualização"
+          style={{ width: '100%', maxHeight: '80vh', objectFit: 'contain' }}
+          src={previewImage}
+        />
       </Modal>
 
       <Modal
@@ -332,10 +417,28 @@ export default function AdminDashboardPage() {
         footer={null}
       >
         <Form onFinish={handleAddProduct}>
-          <Form.Item name="name" label="Nome" rules={[{ required: true, message: 'Por favor, insira o nome do produto' }]}>
+          <Form.Item
+            name="name"
+            label="Nome"
+            rules={[
+              {
+                required: true,
+                message: 'Por favor, insira o nome do produto',
+              },
+            ]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item name="price" label="Preço" rules={[{ required: true, message: 'Por favor, insira o preço do produto' }]}>
+          <Form.Item
+            name="price"
+            label="Preço"
+            rules={[
+              {
+                required: true,
+                message: 'Por favor, insira o preço do produto',
+              },
+            ]}
+          >
             <Input type="number" />
           </Form.Item>
           <Form.Item name="description" label="Descrição">
@@ -349,8 +452,8 @@ export default function AdminDashboardPage() {
           </Form.Item>
           {imageType === 'file' ? (
             <Form.Item name="image" label="Arquivo">
-              <Upload 
-                beforeUpload={() => false} 
+              <Upload
+                beforeUpload={() => false}
                 maxCount={1}
                 onPreview={handlePreview}
                 listType="picture-card"
@@ -360,7 +463,13 @@ export default function AdminDashboardPage() {
               </Upload>
             </Form.Item>
           ) : (
-            <Form.Item name="imageUrl" label="URL da Imagem" rules={[{ type: 'url', message: 'Por favor, insira uma URL válida' }]}>
+            <Form.Item
+              name="imageUrl"
+              label="URL da Imagem"
+              rules={[
+                { type: 'url', message: 'Por favor, insira uma URL válida' },
+              ]}
+            >
               <Input />
             </Form.Item>
           )}
@@ -377,7 +486,11 @@ export default function AdminDashboardPage() {
         footer={null}
         onCancel={() => setPreviewVisible(false)}
       >
-        <img alt="Pré-visualização" style={{ width: '100%' }} src={previewImage} />
+        <img
+          alt="Pré-visualização"
+          style={{ width: '100%' }}
+          src={previewImage}
+        />
       </Modal>
     </PageLayout>
   )
