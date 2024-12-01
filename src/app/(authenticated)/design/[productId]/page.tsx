@@ -31,6 +31,7 @@ export default function DesignEditorPage() {
   const [customColor, setCustomColor] = useState('#000000')
   const [uploadedImage, setUploadedImage] = useState('')
   const [previewUrl, setPreviewUrl] = useState('')
+  const [aiImagePrompt, setAiImagePrompt] = useState('')
 
   const { data: product, isLoading } = Api.product.findUnique.useQuery({
     where: { id: params.productId },
@@ -44,6 +45,7 @@ export default function DesignEditorPage() {
 
   const { mutateAsync: createCartItem } = Api.cartItem.create.useMutation()
   const { mutateAsync: createCart } = Api.cart.create.useMutation()
+  const { mutateAsync: generateImage } = Api.ai.generateImage.useMutation()
 
   useEffect(() => {
     if (product && typeof product.imageUrl === 'string') {
@@ -83,6 +85,17 @@ export default function DesignEditorPage() {
       } catch (error) {
         enqueueSnackbar('Falha ao carregar arquivo', { variant: 'error' })
       }
+    }
+  }
+
+  const handleGenerateAiImage = async () => {
+    try {
+      const { url } = await generateImage({ prompt: aiImagePrompt })
+      setUploadedImage(url)
+      setPreviewUrl(url)
+      enqueueSnackbar('Imagem gerada com sucesso', { variant: 'success' })
+    } catch (error) {
+      enqueueSnackbar('Falha ao gerar imagem', { variant: 'error' })
     }
   }
 
@@ -173,6 +186,14 @@ export default function DesignEditorPage() {
                   id="image-upload"
                   accept="*"
                 />
+                <Input
+                  placeholder="Descreva a imagem que deseja gerar"
+                  value={aiImagePrompt}
+                  onChange={e => setAiImagePrompt(e.target.value)}
+                />
+                <Button onClick={handleGenerateAiImage}>
+                  Gerar Imagem com IA
+                </Button>
                 <Button
                   icon={<UploadOutlined />}
                   onClick={() =>
