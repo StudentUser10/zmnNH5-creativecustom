@@ -47,7 +47,6 @@ export default function AdminDashboardPage() {
   const [generateMockup, setGenerateMockup] = useState(false)
   const { mutateAsync: upload } = useUploadPublic()
   const { mutateAsync: generateImage } = Api.ai.generateImage.useMutation()
-
   const {
     data: ordersData,
     isLoading: isOrdersLoading,
@@ -154,6 +153,12 @@ export default function AdminDashboardPage() {
         const file = values.image[0].originFileObj
         const { url } = await upload({ file })
         imageUrl = url || '/path/to/placeholder.jpg'
+      }
+      if (generateMockup) {
+        const { url } = await generateImage({
+          prompt: `Generate a mockup for product: ${values.name}`
+        })
+        imageUrl = url
       }
       if (generateMockup) {
         const { url } = await generateImage({
@@ -473,6 +478,14 @@ export default function AdminDashboardPage() {
               <Input />
             </Form.Item>
           )}
+          <Form.Item>
+            <Switch
+              checked={generateMockup}
+              onChange={setGenerateMockup}
+              checkedChildren="Gerar Mockup"
+              unCheckedChildren="Mockup Desativado"
+            />
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" loading={isUploading}>
               {isUploading ? 'Adicionando...' : 'Adicionar Produto'}
