@@ -102,7 +102,7 @@ export default function SupportPage() {
 
         // Get AI response
         const { answer } = await generateText({
-          prompt: chatMessage,
+          prompt: `Please help this customer with their question about Creative Custom: ${chatMessage}`,
         })
 
         // Add AI response to chat
